@@ -28,26 +28,26 @@ Uma coisa que se faz repetidamente. Não distingue compra de serviço de tarefa 
 
 | Atributo | Descrição |
 |---|---|
-| `nome` | Texto livre |
-| `dono` | Quem criou |
-| `escopo` | `pessoal` (só o dono vê) ou `compartilhada` (ambas veem, registram e editam) |
-| `intervaloChuteDias` | Opcional. Palpite do usuário, usado apenas enquanto não há intervalo real |
-| `alertaDiasAntes` | Opcional. Override do limiar de alerta |
-| `arquivada` | Sai da lista sem perder o histórico |
+| `name` | Texto livre |
+| `owner` | Quem criou |
+| `scope` | `personal` (só o dono vê) ou `shared` (ambas veem, registram e editam) |
+| `guessedIntervalDays` | Opcional. Palpite do usuário, usado apenas enquanto não há intervalo real |
+| `alertDaysBefore` | Opcional. Override do limiar de alerta |
+| `archived` | Sai da lista sem perder o histórico |
 
-Uma ação pode ser convertida de `pessoal` para `compartilhada` (e vice-versa) a qualquer momento. O histórico não se move.
+Uma ação pode ser convertida de `personal` para `shared` (e vice-versa) a qualquer momento. O histórico não se move.
 
 ### Ocorrência
 Um registro de que a ação foi feita em determinado dia.
 
 | Atributo | Descrição |
 |---|---|
-| `data` | `DATE` puro (`YYYY-MM-DD`), sem hora e sem fuso |
-| `feitaPor` | Quem fez — relevante em ações compartilhadas |
-| `aproximada` | A data foi lembrada de cabeça, não é exata |
-| `valor` | Opcional. Quanto custou |
+| `date` | `DATE` puro (`YYYY-MM-DD`), sem hora e sem fuso |
+| `doneBy` | Quem fez — relevante em ações compartilhadas |
+| `approximate` | A data foi lembrada de cabeça, não é exata |
+| `cost` | Opcional. Quanto custou |
 
-**Restrição:** `UNIQUE (acao_id, data)` — a mesma ação não pode ser registrada duas vezes no mesmo dia. É rede de segurança contra toque duplo acidental no botão de um toque. Se surgir um caso legítimo de duas vezes no mesmo dia, remover a constraint é uma migration de uma linha.
+**Restrição:** `UNIQUE (activity_id, date)` — a mesma ação não pode ser registrada duas vezes no mesmo dia. É rede de segurança contra toque duplo acidental no botão de um toque. Se surgir um caso legítimo de duas vezes no mesmo dia, remover a constraint é uma migration de uma linha.
 
 **Não existe edição de ocorrência.** Errou, apaga e cadastra de novo com a data certa. Edição inline duplicaria caminho de código para o mesmo resultado.
 
@@ -143,30 +143,30 @@ Histórico de ocorrências, cadastro retroativo (data exata + checkbox "data apr
 ```
 user, account, session, verificationToken     -- exigidos pelo @auth/drizzle-adapter
 
-acoes
-  id                   uuid pk
-  dono_id              text → user.id (cascade)
-  nome                 text
-  escopo               enum('pessoal','compartilhada')
-  intervalo_chute_dias int?
-  alerta_dias_antes    int?
-  arquivada            bool = false
-  criada_em            timestamptz
+activities
+  id                     uuid pk
+  owner_id               text → user.id (cascade)
+  name                   text
+  scope                  enum('personal','shared')
+  guessed_interval_days  int?
+  alert_days_before      int?
+  archived               bool = false
+  created_at             timestamptz
 
-ocorrencias
-  id            uuid pk
-  acao_id       uuid → acoes.id (cascade)
-  data          DATE                     -- sem hora, sem fuso
-  feita_por_id  text → user.id
-  aproximada    bool = false
-  valor         numeric(10,2)?
-  criada_em     timestamptz
-  UNIQUE (acao_id, data)
+occurrences
+  id           uuid pk
+  activity_id  uuid → activities.id (cascade)
+  date         DATE                     -- sem hora, sem fuso
+  done_by_id   text → user.id
+  approximate  bool = false
+  cost         numeric(10,2)?
+  created_at   timestamptz
+  UNIQUE (activity_id, date)
 ```
 
 **Nada derivado é armazenado.** Intervalo, confiança, próxima data e estado são calculados na leitura, a partir das ocorrências. Sem cache, sem invalidação, sem risco de valor derivado divergir da origem. O volume de dados de duas pessoas nunca vai justificar o contrário.
 
-**Datas com fuso resolvido na origem.** `ocorrencias.data` é `DATE` puro. Se fosse `timestamp` UTC, "cortei o cabelo hoje às 22h" em São Paulo viraria o dia seguinte no banco e todos os intervalos ficariam sutilmente tortos. O "hoje" do servidor é resolvido em `America/Sao_Paulo` via `Intl.DateTimeFormat`, independente do fuso onde a aplicação roda. `criada_em` é timestamp UTC e não entra em cálculo nenhum.
+**Datas com fuso resolvido na origem.** `occurrences.date` é `DATE` puro. Se fosse `timestamp` UTC, "cortei o cabelo hoje às 22h" em São Paulo viraria o dia seguinte no banco e todos os intervalos ficariam sutilmente tortos. O "hoje" do servidor é resolvido em `America/Sao_Paulo` via `Intl.DateTimeFormat`, independente do fuso onde a aplicação roda. `created_at` é timestamp UTC e não entra em cálculo nenhum.
 
 ## 7. Stack
 
@@ -179,6 +179,12 @@ ocorrencias
 | UI | Tailwind 4 + shadcn/ui (Radix) | componentes copiados para o repo, não dependência mágica |
 | Datas | date-fns | com fuso fixo em `America/Sao_Paulo` |
 | Deploy | Vercel | zero config com Next.js |
+
+### Idioma
+
+**Código em inglês, produto em português.** Identificadores, comentários, nomes de tabela e coluna, rotas e descrições de teste são em inglês. Textos de tela e esta documentação são em português — quem usa o app são duas brasileiras.
+
+Uma nota de nomenclatura: o domínio chama de "ação" o que no código é **`Activity`**, não `Action`. A tradução direta colidiria com as Server Actions do Next.js, e `activities/actions.ts` se lê sozinho onde `actions/actions.ts` não se leria. O registro de uma ação feita é uma **`Occurrence`**.
 
 **Supabase foi considerado e descartado.** Juntaria banco, auth e storage num serviço só, e seria a escolha certa se o objetivo fosse velocidade. Não é: o objetivo é aprender como as peças se encaixam, e o cliente Supabase puxa o código para fora dos padrões do Next.js.
 
@@ -211,7 +217,7 @@ Isso é uma decisão consciente da autora: usar primeiro, medir o incômodo, e e
 
 Nenhuma. As duas anteriores foram resolvidas:
 
-- ~~Bug de fuso em `somarDias`~~ — corrigido. A suíte de datas roda idêntica em `UTC`, `Asia/Tokyo`, `Pacific/Kiritimati` e `America/Sao_Paulo`, com teste de regressão nomeado.
+- ~~Bug de fuso em `shiftDays`~~ — corrigido. A suíte de datas roda idêntica em `UTC`, `Asia/Tokyo`, `Pacific/Kiritimati` e `America/Sao_Paulo`, com teste de regressão nomeado.
 - ~~Ação com chute mas sem âncora~~ — resolvido como proposto: o formulário de nova ação pergunta "quando foi a última vez?", e a resposta vira a primeira ocorrência, marcada como aproximada. Sem ela, a ação existe mas não projeta data — comportamento coberto por teste.
 
 ## 11. Plano de implementação
@@ -219,12 +225,12 @@ Nenhuma. As duas anteriores foram resolvidas:
 | # | Etapa | Status |
 |---|---|---|
 | 1 | Scaffold: Next + Tailwind + shadcn, Drizzle + Neon, Auth.js Google com allowlist | ✅ |
-| 2 | Schema + migration | 🔶 SQL gerado (`drizzle/0000_inicial.sql`), não aplicado — falta banco |
-| 3 | Motor de cálculo (`lib/periodicidade.ts`) + testes | ✅ 42 testes |
+| 2 | Schema + migration | 🔶 SQL gerado (`drizzle/0000_initial.sql`), não aplicado — falta banco |
+| 3 | Motor de cálculo (`lib/periodicity.ts`) + testes | ✅ 42 testes |
 | 4 | Lista + registrar + desfazer | ✅ código pronto, sem execução real |
 | 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ código pronto, sem execução real |
 | 6 | Deploy na Vercel + Neon de produção | ⬜ |
 
-**Bloqueio atual:** faltam credenciais no `.env.local` — connection string do Neon, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` do Google Cloud Console (redirect URI `http://localhost:3000/api/auth/callback/google`) e os dois e-mails em `EMAILS_PERMITIDOS`.
+**Bloqueio atual:** faltam credenciais no `.env.local` — connection string do Neon, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` do Google Cloud Console (redirect URI `http://localhost:3000/api/auth/callback/google`) e os dois e-mails em `ALLOWED_EMAILS`.
 
 Enquanto isso, `build`, `lint`, `tsc` e os testes passam — mas **nenhuma tela foi executada contra um banco real**. Toda a camada de dados e de UI está verificada apenas por tipagem e compilação. Os primeiros erros de integração aparecem no `npm run dev` com credenciais válidas, e é esperado que apareçam.

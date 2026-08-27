@@ -2,28 +2,31 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { auth } from "@/auth"
-import { BotaoApagarOcorrencia, BotaoArquivar } from "@/components/acoes-perigosas"
-import { BotaoFiz } from "@/components/botao-fiz"
-import { FormularioRetroativo } from "@/components/formulario-retroativo"
+import { BackfillForm } from "@/components/backfill-form"
+import {
+  ArchiveButton,
+  DeleteOccurrenceButton,
+} from "@/components/destructive-buttons"
+import { DoneButton } from "@/components/done-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { buscarAcao } from "@/lib/acoes"
+import { getActivity } from "@/lib/activities"
 import {
-  descreverConfianca,
-  descreverIntervalo,
-  descreverPrazo,
-  formatarDataLonga,
-  formatarValor,
-} from "@/lib/formato"
+  describeConfidence,
+  describeDue,
+  describeInterval,
+  formatCost,
+  formatLongDate,
+} from "@/lib/format"
 
-export default async function DetalheAcaoPage({ params }: PageProps<"/acoes/[id]">) {
+export default async function ActivityPage({ params }: PageProps<"/activities/[id]">) {
   const session = await auth()
   const { id } = await params
 
-  const acao = await buscarAcao(session!.user!.id!, id)
-  if (!acao) notFound()
+  const activity = await getActivity(session!.user!.id!, id)
+  if (!activity) notFound()
 
-  const e = acao.estimativa
+  const { forecast } = activity
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 p-4">
@@ -35,26 +38,26 @@ export default async function DetalheAcaoPage({ params }: PageProps<"/acoes/[id]
 
       <header className="space-y-2">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-2xl font-semibold">{acao.nome}</h1>
-          <BotaoFiz acaoId={acao.id} nome={acao.nome} />
+          <h1 className="text-2xl font-semibold">{activity.name}</h1>
+          <DoneButton activityId={activity.id} name={activity.name} />
         </div>
-        {acao.escopo === "compartilhada" && <Badge variant="secondary">compartilhada</Badge>}
+        {activity.scope === "shared" && <Badge variant="secondary">compartilhada</Badge>}
       </header>
 
       <section className="space-y-1 rounded-md border p-4">
-        <p className="text-lg font-medium">{descreverPrazo(e)}</p>
+        <p className="text-lg font-medium">{describeDue(forecast)}</p>
         <p className="text-sm text-muted-foreground">
-          {[descreverIntervalo(e.intervaloDias), descreverConfianca(e)]
+          {[describeInterval(forecast.intervalDays), describeConfidence(forecast)]
             .filter(Boolean)
             .join(" · ")}
         </p>
-        {e.limiarAlertaDias != null && (
+        {forecast.alertThresholdDays != null && (
           <p className="text-xs text-muted-foreground">
-            Aviso a partir de {e.limiarAlertaDias} dias antes
-            {acao.alertaDiasAntes == null ? " (automático)" : ""}.
+            Aviso a partir de {forecast.alertThresholdDays} dias antes
+            {activity.alertDaysBefore == null ? " (automático)" : ""}.
           </p>
         )}
-        {!e.destacar && e.intervaloDias != null && (
+        {!forecast.highlight && forecast.intervalDays != null && (
           <p className="pt-1 text-xs text-muted-foreground">
             Ainda com poucos ciclos medidos — a previsão aparece, mas não entra na
             ordenação por urgência.
@@ -62,37 +65,37 @@ export default async function DetalheAcaoPage({ params }: PageProps<"/acoes/[id]
         )}
       </section>
 
-      <FormularioRetroativo acaoId={acao.id} />
+      <BackfillForm activityId={activity.id} />
 
       <section className="space-y-2">
         <h2 className="text-sm font-medium text-muted-foreground">
-          Histórico ({acao.ocorrencias.length})
+          Histórico ({activity.occurrences.length})
         </h2>
-        {acao.ocorrencias.length === 0 ? (
+        {activity.occurrences.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum registro ainda.</p>
         ) : (
           <ul className="divide-y rounded-md border">
-            {acao.ocorrencias.map((o) => (
+            {activity.occurrences.map((o) => (
               <li key={o.id} className="flex items-center justify-between gap-2 px-3 py-2">
                 <div className="min-w-0">
                   <p className="text-sm">
-                    {formatarDataLonga(o.data)}
-                    {o.aproximada && (
+                    {formatLongDate(o.date)}
+                    {o.approximate && (
                       <span className="text-muted-foreground"> · aproximada</span>
                     )}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {[
-                      acao.escopo === "compartilhada" ? o.feitaPor?.name : null,
-                      formatarValor(o.valor),
+                      activity.scope === "shared" ? o.doneBy?.name : null,
+                      formatCost(o.cost),
                     ]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
                 </div>
-                <BotaoApagarOcorrencia
-                  ocorrenciaId={o.id}
-                  rotuloData={formatarDataLonga(o.data)}
+                <DeleteOccurrenceButton
+                  occurrenceId={o.id}
+                  dateLabel={formatLongDate(o.date)}
                 />
               </li>
             ))}
@@ -102,9 +105,9 @@ export default async function DetalheAcaoPage({ params }: PageProps<"/acoes/[id]
 
       <footer className="flex gap-2 border-t pt-4">
         <Button asChild variant="ghost" size="sm">
-          <Link href={`/acoes/${acao.id}/editar`}>Editar</Link>
+          <Link href={`/activities/${activity.id}/edit`}>Editar</Link>
         </Button>
-        <BotaoArquivar acaoId={acao.id} arquivada={acao.arquivada} />
+        <ArchiveButton activityId={activity.id} archived={activity.archived} />
       </footer>
     </div>
   )

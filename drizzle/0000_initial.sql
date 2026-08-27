@@ -1,4 +1,4 @@
-CREATE TYPE "public"."escopo" AS ENUM('pessoal', 'compartilhada');--> statement-breakpoint
+CREATE TYPE "public"."scope" AS ENUM('personal', 'shared');--> statement-breakpoint
 CREATE TABLE "account" (
 	"userId" text NOT NULL,
 	"type" text NOT NULL,
@@ -14,25 +14,25 @@ CREATE TABLE "account" (
 	CONSTRAINT "account_provider_providerAccountId_pk" PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
-CREATE TABLE "acoes" (
+CREATE TABLE "activities" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"dono_id" text NOT NULL,
-	"nome" text NOT NULL,
-	"escopo" "escopo" DEFAULT 'pessoal' NOT NULL,
-	"intervalo_chute_dias" integer,
-	"alerta_dias_antes" integer,
-	"arquivada" boolean DEFAULT false NOT NULL,
-	"criada_em" timestamp with time zone DEFAULT now() NOT NULL
+	"owner_id" text NOT NULL,
+	"name" text NOT NULL,
+	"scope" "scope" DEFAULT 'personal' NOT NULL,
+	"guessed_interval_days" integer,
+	"alert_days_before" integer,
+	"archived" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "ocorrencias" (
+CREATE TABLE "occurrences" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"acao_id" uuid NOT NULL,
-	"data" date NOT NULL,
-	"feita_por_id" text NOT NULL,
-	"aproximada" boolean DEFAULT false NOT NULL,
-	"valor" numeric(10, 2),
-	"criada_em" timestamp with time zone DEFAULT now() NOT NULL
+	"activity_id" uuid NOT NULL,
+	"date" date NOT NULL,
+	"done_by_id" text NOT NULL,
+	"approximate" boolean DEFAULT false NOT NULL,
+	"cost" numeric(10, 2),
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
@@ -58,9 +58,9 @@ CREATE TABLE "verificationToken" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "acoes" ADD CONSTRAINT "acoes_dono_id_user_id_fk" FOREIGN KEY ("dono_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ocorrencias" ADD CONSTRAINT "ocorrencias_acao_id_acoes_id_fk" FOREIGN KEY ("acao_id") REFERENCES "public"."acoes"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ocorrencias" ADD CONSTRAINT "ocorrencias_feita_por_id_user_id_fk" FOREIGN KEY ("feita_por_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "activities" ADD CONSTRAINT "activities_owner_id_user_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "occurrences" ADD CONSTRAINT "occurrences_activity_id_activities_id_fk" FOREIGN KEY ("activity_id") REFERENCES "public"."activities"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "occurrences" ADD CONSTRAINT "occurrences_done_by_id_user_id_fk" FOREIGN KEY ("done_by_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "acoes_dono_idx" ON "acoes" USING btree ("dono_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "ocorrencias_acao_data_uq" ON "ocorrencias" USING btree ("acao_id","data");
+CREATE INDEX "activities_owner_idx" ON "activities" USING btree ("owner_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "occurrences_activity_date_uq" ON "occurrences" USING btree ("activity_id","date");

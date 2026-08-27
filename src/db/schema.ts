@@ -16,7 +16,7 @@ import {
 import type { AdapterAccountType } from "next-auth/adapters"
 
 /* ------------------------------------------------------------------ */
-/* Auth.js — nomes e formato exigidos pelo @auth/drizzle-adapter        */
+/* Auth.js — names and shape required by @auth/drizzle-adapter          */
 /* ------------------------------------------------------------------ */
 
 export const users = pgTable("user", {
@@ -70,52 +70,52 @@ export const verificationTokens = pgTable(
 )
 
 /* ------------------------------------------------------------------ */
-/* Domínio                                                              */
+/* Domain                                                               */
 /* ------------------------------------------------------------------ */
 
-export const escopoEnum = pgEnum("escopo", ["pessoal", "compartilhada"])
+export const scopeEnum = pgEnum("scope", ["personal", "shared"])
 
-export const acoes = pgTable(
-  "acoes",
+export const activities = pgTable(
+  "activities",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    donoId: text("dono_id")
+    ownerId: text("owner_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    nome: text("nome").notNull(),
-    escopo: escopoEnum("escopo").notNull().default("pessoal"),
-    /** Chute inicial do usuário. Descartado assim que existe 1 intervalo real. */
-    intervaloChuteDias: integer("intervalo_chute_dias"),
-    /** Override do alerta. Sem ele, usa 15% do intervalo estimado. */
-    alertaDiasAntes: integer("alerta_dias_antes"),
-    arquivada: boolean("arquivada").notNull().default(false),
-    criadaEm: timestamp("criada_em", { withTimezone: true })
+    name: text("name").notNull(),
+    scope: scopeEnum("scope").notNull().default("personal"),
+    /** The user's hunch. Dropped as soon as one real interval exists. */
+    guessedIntervalDays: integer("guessed_interval_days"),
+    /** Alert override. Without it, 15% of the estimated interval is used. */
+    alertDaysBefore: integer("alert_days_before"),
+    archived: boolean("archived").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
-  (t) => [index("acoes_dono_idx").on(t.donoId)],
+  (t) => [index("activities_owner_idx").on(t.ownerId)],
 )
 
-export const ocorrencias = pgTable(
-  "ocorrencias",
+export const occurrences = pgTable(
+  "occurrences",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    acaoId: uuid("acao_id")
+    activityId: uuid("activity_id")
       .notNull()
-      .references(() => acoes.id, { onDelete: "cascade" }),
-    /** DATE puro (YYYY-MM-DD). Sem hora, sem fuso — decisão Q24. */
-    data: date("data", { mode: "string" }).notNull(),
-    feitaPorId: text("feita_por_id")
+      .references(() => activities.id, { onDelete: "cascade" }),
+    /** Plain DATE (YYYY-MM-DD). No time, no time zone — spec §6. */
+    date: date("date", { mode: "string" }).notNull(),
+    doneById: text("done_by_id")
       .notNull()
       .references(() => users.id),
-    /** Data lembrada de cabeça: conta no cálculo, mas rebaixa a confiança. */
-    aproximada: boolean("aproximada").notNull().default(false),
-    valor: numeric("valor", { precision: 10, scale: 2 }),
-    criadaEm: timestamp("criada_em", { withTimezone: true })
+    /** Recalled from memory: still counts, but lowers confidence. */
+    approximate: boolean("approximate").notNull().default(false),
+    cost: numeric("cost", { precision: 10, scale: 2 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
-  (t) => [uniqueIndex("ocorrencias_acao_data_uq").on(t.acaoId, t.data)],
+  (t) => [uniqueIndex("occurrences_activity_date_uq").on(t.activityId, t.date)],
 )
 
 /* ------------------------------------------------------------------ */
@@ -123,22 +123,25 @@ export const ocorrencias = pgTable(
 /* ------------------------------------------------------------------ */
 
 export const usersRelations = relations(users, ({ many }) => ({
-  acoes: many(acoes),
-  ocorrencias: many(ocorrencias),
+  activities: many(activities),
+  occurrences: many(occurrences),
 }))
 
-export const acoesRelations = relations(acoes, ({ one, many }) => ({
-  dono: one(users, { fields: [acoes.donoId], references: [users.id] }),
-  ocorrencias: many(ocorrencias),
+export const activitiesRelations = relations(activities, ({ one, many }) => ({
+  owner: one(users, { fields: [activities.ownerId], references: [users.id] }),
+  occurrences: many(occurrences),
 }))
 
-export const ocorrenciasRelations = relations(ocorrencias, ({ one }) => ({
-  acao: one(acoes, { fields: [ocorrencias.acaoId], references: [acoes.id] }),
-  feitaPor: one(users, {
-    fields: [ocorrencias.feitaPorId],
+export const occurrencesRelations = relations(occurrences, ({ one }) => ({
+  activity: one(activities, {
+    fields: [occurrences.activityId],
+    references: [activities.id],
+  }),
+  doneBy: one(users, {
+    fields: [occurrences.doneById],
     references: [users.id],
   }),
 }))
 
-export type Acao = typeof acoes.$inferSelect
-export type Ocorrencia = typeof ocorrencias.$inferSelect
+export type Activity = typeof activities.$inferSelect
+export type Occurrence = typeof occurrences.$inferSelect

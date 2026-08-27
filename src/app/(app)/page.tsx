@@ -1,67 +1,67 @@
 import Link from "next/link"
 
 import { auth } from "@/auth"
-import { LinhaAcao } from "@/components/linha-acao"
+import { ActivityRow } from "@/components/activity-row"
 import { Button } from "@/components/ui/button"
-import { listarAcoes, type Filtro } from "@/lib/acoes"
+import { listActivities, type Filter } from "@/lib/activities"
 
-const FILTROS: { valor: Filtro; rotulo: string }[] = [
-  { valor: "todas", rotulo: "Todas" },
-  { valor: "minhas", rotulo: "Minhas" },
-  { valor: "compartilhadas", rotulo: "Compartilhadas" },
+const FILTERS: { value: Filter; label: string }[] = [
+  { value: "all", label: "Todas" },
+  { value: "mine", label: "Minhas" },
+  { value: "shared", label: "Compartilhadas" },
 ]
 
-export default async function ListaPage({ searchParams }: PageProps<"/">) {
+export default async function ListPage({ searchParams }: PageProps<"/">) {
   const session = await auth()
-  const usuarioId = session!.user!.id!
+  const userId = session!.user!.id!
 
   const { f } = await searchParams
-  const filtro: Filtro = FILTROS.some((x) => x.valor === f) ? (f as Filtro) : "todas"
+  const filter: Filter = FILTERS.some((x) => x.value === f) ? (f as Filter) : "all"
 
-  const acoes = await listarAcoes(usuarioId, { filtro })
+  const activities = await listActivities(userId, { filter })
 
   return (
     <div className="mx-auto w-full max-w-2xl">
       <div className="flex items-center justify-between gap-2 px-4 py-3">
         <nav className="flex gap-1">
-          {FILTROS.map(({ valor, rotulo }) => (
+          {FILTERS.map(({ value, label }) => (
             <Link
-              key={valor}
-              href={valor === "todas" ? "/" : `/?f=${valor}`}
+              key={value}
+              href={value === "all" ? "/" : `/?f=${value}`}
               className={`rounded-full px-3 py-1 text-sm ${
-                filtro === valor
+                filter === value
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-muted"
               }`}
             >
-              {rotulo}
+              {label}
             </Link>
           ))}
         </nav>
 
         <Button asChild size="sm">
-          <Link href="/acoes/nova">Nova</Link>
+          <Link href="/activities/new">Nova</Link>
         </Button>
       </div>
 
-      {acoes.length === 0 ? (
+      {activities.length === 0 ? (
         <div className="px-4 py-16 text-center">
           <p className="text-sm text-muted-foreground">
-            {filtro === "todas"
+            {filter === "all"
               ? "Nada cadastrado ainda. Comece pela coisa que você mais esquece."
               : "Nada aqui com esse filtro."}
           </p>
         </div>
       ) : (
         <ul className="divide-y border-y">
-          {acoes.map((acao) => (
-            <LinhaAcao key={acao.id} acao={acao} />
+          {activities.map((activity) => (
+            <ActivityRow key={activity.id} activity={activity} />
           ))}
         </ul>
       )}
 
       <div className="px-4 py-6">
-        <Link href="/arquivadas" className="text-xs text-muted-foreground hover:underline">
+        <Link href="/archived" className="text-xs text-muted-foreground hover:underline">
           Ver arquivadas
         </Link>
       </div>

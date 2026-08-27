@@ -1,11 +1,11 @@
 import Link from "next/link"
 
 import { auth } from "@/auth"
-import { listarAcoes } from "@/lib/acoes"
+import { listActivities } from "@/lib/activities"
 
-export default async function ArquivadasPage() {
+export default async function ArchivedPage() {
   const session = await auth()
-  const acoes = await listarAcoes(session!.user!.id!, { arquivadas: true })
+  const activities = await listActivities(session!.user!.id!, { archived: true })
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-4 p-4">
@@ -14,16 +14,17 @@ export default async function ArquivadasPage() {
       </Link>
       <h1 className="text-xl font-semibold">Arquivadas</h1>
 
-      {acoes.length === 0 ? (
+      {activities.length === 0 ? (
         <p className="text-sm text-muted-foreground">Nada arquivado.</p>
       ) : (
         <ul className="divide-y rounded-md border">
-          {acoes.map((a) => (
+          {activities.map((a) => (
             <li key={a.id}>
-              <Link href={`/acoes/${a.id}`} className="block px-3 py-3 hover:bg-muted">
-                <span className="font-medium">{a.nome}</span>
+              <Link href={`/activities/${a.id}`} className="block px-3 py-3 hover:bg-muted">
+                <span className="font-medium">{a.name}</span>
                 <span className="block text-xs text-muted-foreground">
-                  {a.qtdOcorrencias} registro{a.qtdOcorrencias === 1 ? "" : "s"} no histórico
+                  {a.occurrenceCount} registro{a.occurrenceCount === 1 ? "" : "s"} no
+                  histórico
                 </span>
               </Link>
             </li>

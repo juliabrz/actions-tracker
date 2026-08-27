@@ -1,5 +1,5 @@
 {
-  "id": "49a5b09f-3163-48d0-b3fe-baa4f3c4a719",
+  "id": "a0e06194-8952-4d29-b201-2158bc24a446",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -105,8 +105,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.acoes": {
-      "name": "acoes",
+    "public.activities": {
+      "name": "activities",
       "schema": "",
       "columns": {
         "id": {
@@ -116,47 +116,47 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "dono_id": {
-          "name": "dono_id",
+        "owner_id": {
+          "name": "owner_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "nome": {
-          "name": "nome",
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "escopo": {
-          "name": "escopo",
-          "type": "escopo",
+        "scope": {
+          "name": "scope",
+          "type": "scope",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": "'pessoal'"
+          "default": "'personal'"
         },
-        "intervalo_chute_dias": {
-          "name": "intervalo_chute_dias",
+        "guessed_interval_days": {
+          "name": "guessed_interval_days",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "alerta_dias_antes": {
-          "name": "alerta_dias_antes",
+        "alert_days_before": {
+          "name": "alert_days_before",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "arquivada": {
-          "name": "arquivada",
+        "archived": {
+          "name": "archived",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "default": false
         },
-        "criada_em": {
-          "name": "criada_em",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -164,11 +164,11 @@
         }
       },
       "indexes": {
-        "acoes_dono_idx": {
-          "name": "acoes_dono_idx",
+        "activities_owner_idx": {
+          "name": "activities_owner_idx",
           "columns": [
             {
-              "expression": "dono_id",
+              "expression": "owner_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -181,12 +181,12 @@
         }
       },
       "foreignKeys": {
-        "acoes_dono_id_user_id_fk": {
-          "name": "acoes_dono_id_user_id_fk",
-          "tableFrom": "acoes",
+        "activities_owner_id_user_id_fk": {
+          "name": "activities_owner_id_user_id_fk",
+          "tableFrom": "activities",
           "tableTo": "user",
           "columnsFrom": [
-            "dono_id"
+            "owner_id"
           ],
           "columnsTo": [
             "id"
@@ -201,8 +201,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.ocorrencias": {
-      "name": "ocorrencias",
+    "public.occurrences": {
+      "name": "occurrences",
       "schema": "",
       "columns": {
         "id": {
@@ -212,39 +212,39 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "acao_id": {
-          "name": "acao_id",
+        "activity_id": {
+          "name": "activity_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "data": {
-          "name": "data",
+        "date": {
+          "name": "date",
           "type": "date",
           "primaryKey": false,
           "notNull": true
         },
-        "feita_por_id": {
-          "name": "feita_por_id",
+        "done_by_id": {
+          "name": "done_by_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "aproximada": {
-          "name": "aproximada",
+        "approximate": {
+          "name": "approximate",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "default": false
         },
-        "valor": {
-          "name": "valor",
+        "cost": {
+          "name": "cost",
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "criada_em": {
-          "name": "criada_em",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -252,17 +252,17 @@
         }
       },
       "indexes": {
-        "ocorrencias_acao_data_uq": {
-          "name": "ocorrencias_acao_data_uq",
+        "occurrences_activity_date_uq": {
+          "name": "occurrences_activity_date_uq",
           "columns": [
             {
-              "expression": "acao_id",
+              "expression": "activity_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             },
             {
-              "expression": "data",
+              "expression": "date",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -275,12 +275,12 @@
         }
       },
       "foreignKeys": {
-        "ocorrencias_acao_id_acoes_id_fk": {
-          "name": "ocorrencias_acao_id_acoes_id_fk",
-          "tableFrom": "ocorrencias",
-          "tableTo": "acoes",
+        "occurrences_activity_id_activities_id_fk": {
+          "name": "occurrences_activity_id_activities_id_fk",
+          "tableFrom": "occurrences",
+          "tableTo": "activities",
           "columnsFrom": [
-            "acao_id"
+            "activity_id"
           ],
           "columnsTo": [
             "id"
@@ -288,12 +288,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "ocorrencias_feita_por_id_user_id_fk": {
-          "name": "ocorrencias_feita_por_id_user_id_fk",
-          "tableFrom": "ocorrencias",
+        "occurrences_done_by_id_user_id_fk": {
+          "name": "occurrences_done_by_id_user_id_fk",
+          "tableFrom": "occurrences",
           "tableTo": "user",
           "columnsFrom": [
-            "feita_por_id"
+            "done_by_id"
           ],
           "columnsTo": [
             "id"
@@ -445,12 +445,12 @@
     }
   },
   "enums": {
-    "public.escopo": {
-      "name": "escopo",
+    "public.scope": {
+      "name": "scope",
       "schema": "public",
       "values": [
-        "pessoal",
-        "compartilhada"
+        "personal",
+        "shared"
       ]
     }
   },

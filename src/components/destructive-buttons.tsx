@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { toast } from "sonner"
 
-import { apagarOcorrencia, definirArquivada } from "@/app/(app)/acoes/actions"
+import { deleteOccurrence, setArchived } from "@/app/(app)/activities/actions"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,15 +18,15 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 
-export function BotaoApagarOcorrencia({
-  ocorrenciaId,
-  rotuloData,
+export function DeleteOccurrenceButton({
+  occurrenceId,
+  dateLabel,
 }: {
-  ocorrenciaId: string
-  rotuloData: string
+  occurrenceId: string
+  dateLabel: string
 }) {
   const router = useRouter()
-  const [pendente, iniciar] = useTransition()
+  const [pending, start] = useTransition()
 
   return (
     <AlertDialog>
@@ -34,7 +34,7 @@ export function BotaoApagarOcorrencia({
         <Button
           variant="ghost"
           size="sm"
-          disabled={pendente}
+          disabled={pending}
           className="text-muted-foreground hover:text-destructive"
         >
           Apagar
@@ -42,7 +42,7 @@ export function BotaoApagarOcorrencia({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Apagar o registro de {rotuloData}?</AlertDialogTitle>
+          <AlertDialogTitle>Apagar o registro de {dateLabel}?</AlertDialogTitle>
           <AlertDialogDescription>
             O intervalo estimado será recalculado sem ele.
           </AlertDialogDescription>
@@ -51,12 +51,12 @@ export function BotaoApagarOcorrencia({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={() =>
-              iniciar(async () => {
-                const r = await apagarOcorrencia(ocorrenciaId)
-                if (r.ok) {
+              start(async () => {
+                const result = await deleteOccurrence(occurrenceId)
+                if (result.ok) {
                   toast.success("Registro apagado.")
                   router.refresh()
-                } else toast.error(r.erro)
+                } else toast.error(result.error)
               })
             }
           >
@@ -68,36 +68,36 @@ export function BotaoApagarOcorrencia({
   )
 }
 
-export function BotaoArquivar({
-  acaoId,
-  arquivada,
+export function ArchiveButton({
+  activityId,
+  archived,
 }: {
-  acaoId: string
-  arquivada: boolean
+  activityId: string
+  archived: boolean
 }) {
   const router = useRouter()
-  const [pendente, iniciar] = useTransition()
+  const [pending, start] = useTransition()
 
   return (
     <Button
       variant="ghost"
       size="sm"
-      disabled={pendente}
+      disabled={pending}
       className="text-muted-foreground"
       onClick={() =>
-        iniciar(async () => {
-          const r = await definirArquivada(acaoId, !arquivada)
-          if (!r.ok) {
-            toast.error(r.erro)
+        start(async () => {
+          const result = await setArchived(activityId, !archived)
+          if (!result.ok) {
+            toast.error(result.error)
             return
           }
-          toast.success(arquivada ? "Ação reativada." : "Ação arquivada.")
-          if (arquivada) router.refresh()
+          toast.success(archived ? "Ação reativada." : "Ação arquivada.")
+          if (archived) router.refresh()
           else router.push("/")
         })
       }
     >
-      {arquivada ? "Reativar" : "Arquivar"}
+      {archived ? "Reativar" : "Arquivar"}
     </Button>
   )
 }
