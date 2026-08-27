@@ -190,6 +190,23 @@ Uma nota de nomenclatura: o domínio chama de "ação" o que no código é **`Ac
 
 Proteção de rota é feita no layout do grupo `src/app/(app)/`, com `auth()` no servidor — não em middleware. Sessão é de banco (via adapter), e adapter não roda no edge; middleware exigiria configuração dividida para resolver um problema que este app não tem.
 
+## 7.1 Rodando localmente
+
+O banco de desenvolvimento é **PGlite** — Postgres compilado em WASM, rodando dentro do próprio processo Node. Não há daemon, container nem cadastro; o banco inteiro é a pasta `.pglite/`, ignorada pelo git.
+
+Isso não é preciosismo: o driver `neon()` fala o protocolo HTTP da Neon, não o protocolo de fio do Postgres. Qualquer banco local — Docker inclusive — exigiria um segundo driver de qualquer jeito. `src/db/index.ts` escolhe o driver pelo prefixo do `DATABASE_URL`, e `pglite://` é recusado quando `NODE_ENV=production`.
+
+```bash
+npm run db:seed   # cria o banco, aplica as migrations e popula
+npm run dev
+```
+
+Depois abra **`/dev-login`** e escolha entre Julia e Marina. Essa rota escreve a sessão e o cookie direto, o que é o único jeito de entrar sem Google enquanto a sessão é de banco — um provider de credenciais exigiria trocar a estratégia para JWT. Ela é duplamente travada: fora de produção **e** com `DEV_LOGIN=true`.
+
+O seed cria 12 ações desenhadas para exercitar cada estado da interface — atrasada, chegando, em dia, sem previsão, palpite sem ciclo medido, previsão em cinza por ter só um ciclo, confiança rebaixada por data aproximada, outlier que a mediana precisa ignorar, override manual do aviso, valores em reais, ações compartilhadas entre as duas contas e uma arquivada.
+
+**Uma armadilha registrada:** o `db` é cacheado em `globalThis`. O servidor de desenvolvimento avalia o módulo mais de uma vez, e cada instância do PGlite mantém sua própria imagem do banco em memória — sem o cache, uma escrita feita numa rota fica invisível para a renderização seguinte. Foi exatamente o que aconteceu na primeira tentativa de login.
+
 ## 8. Fora do escopo do v1
 
 Cada item aqui foi discutido e adiado de propósito.
@@ -227,10 +244,12 @@ Nenhuma. As duas anteriores foram resolvidas:
 | 1 | Scaffold: Next + Tailwind + shadcn, Drizzle + Neon, Auth.js Google com allowlist | ✅ |
 | 2 | Schema + migration | 🔶 SQL gerado (`drizzle/0000_initial.sql`), não aplicado — falta banco |
 | 3 | Motor de cálculo (`lib/periodicity.ts`) + testes | ✅ 42 testes |
-| 4 | Lista + registrar + desfazer | ✅ código pronto, sem execução real |
-| 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ código pronto, sem execução real |
+| 4 | Lista + registrar + desfazer | ✅ telas verificadas rodando |
+| 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ telas verificadas rodando |
 | 6 | Deploy na Vercel + Neon de produção | ⬜ |
 
-**Bloqueio atual:** faltam credenciais no `.env.local` — connection string do Neon, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` do Google Cloud Console (redirect URI `http://localhost:3000/api/auth/callback/google`) e os dois e-mails em `ALLOWED_EMAILS`.
+**O que já foi verificado rodando** (PGlite + seed): login, lista com ordenação por urgência, filtros, detalhe com histórico, cadastro, edição, arquivadas, e a regra de visibilidade — Marina vê 4 ações compartilhadas, Julia vê 11 (7 pessoais + 4 compartilhadas).
 
-Enquanto isso, `build`, `lint`, `tsc` e os testes passam — mas **nenhuma tela foi executada contra um banco real**. Toda a camada de dados e de UI está verificada apenas por tipagem e compilação. Os primeiros erros de integração aparecem no `npm run dev` com credenciais válidas, e é esperado que apareçam.
+**O que ainda não foi verificado:** as mutações. Registrar, desfazer, apagar, criar, editar e arquivar têm o caminho de dados exercitado indiretamente, mas o disparo real de Server Action a partir da interface nunca aconteceu. É o primeiro lugar onde procurar bug.
+
+**Falta para produção:** connection string do Neon, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` do Google Cloud Console (redirect URI `http://localhost:3000/api/auth/callback/google`) e os dois e-mails em `ALLOWED_EMAILS`.
