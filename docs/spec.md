@@ -209,20 +209,22 @@ Isso é uma decisão consciente da autora: usar primeiro, medir o incômodo, e e
 
 ## 10. Pendências em aberto
 
-- **Bug conhecido:** `src/lib/datas.ts`, função `somarDias` — formata em `America/Sao_Paulo` uma data que já é local, deslocando um dia quando o servidor roda em UTC (isto é, na Vercel). Correção: usar `format(addDays(parseISO(d), n), "yyyy-MM-dd")`, que faz round-trip correto em qualquer fuso.
-- **A confirmar:** ação criada com chute mas sem nenhuma ocorrência não tem data-âncora e portanto não gera previsão. A proposta é o formulário de nova ação perguntar "quando foi a última vez?", criando a primeira ocorrência. Ver seção 5.
+Nenhuma. As duas anteriores foram resolvidas:
+
+- ~~Bug de fuso em `somarDias`~~ — corrigido. A suíte de datas roda idêntica em `UTC`, `Asia/Tokyo`, `Pacific/Kiritimati` e `America/Sao_Paulo`, com teste de regressão nomeado.
+- ~~Ação com chute mas sem âncora~~ — resolvido como proposto: o formulário de nova ação pergunta "quando foi a última vez?", e a resposta vira a primeira ocorrência, marcada como aproximada. Sem ela, a ação existe mas não projeta data — comportamento coberto por teste.
 
 ## 11. Plano de implementação
 
 | # | Etapa | Status |
 |---|---|---|
-| 1 | Scaffold: Next + Tailwind + shadcn, Drizzle + Neon, Auth.js Google com allowlist | ✅ commit `b0b16da` |
-| 2 | Schema + migrations + seed | 🔶 schema escrito, migration não rodada |
-| 3 | Motor de cálculo (`lib/periodicidade.ts`) + testes com Vitest | ⬜ |
-| 4 | Lista + registrar + desfazer | ⬜ |
-| 5 | Detalhe: histórico, retroativo, apagar, arquivar | ⬜ |
+| 1 | Scaffold: Next + Tailwind + shadcn, Drizzle + Neon, Auth.js Google com allowlist | ✅ |
+| 2 | Schema + migration | 🔶 SQL gerado (`drizzle/0000_inicial.sql`), não aplicado — falta banco |
+| 3 | Motor de cálculo (`lib/periodicidade.ts`) + testes | ✅ 42 testes |
+| 4 | Lista + registrar + desfazer | ✅ código pronto, sem execução real |
+| 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ código pronto, sem execução real |
 | 6 | Deploy na Vercel + Neon de produção | ⬜ |
 
-Do 1 ao 4 já existe algo usável no dia a dia.
-
 **Bloqueio atual:** faltam credenciais no `.env.local` — connection string do Neon, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` do Google Cloud Console (redirect URI `http://localhost:3000/api/auth/callback/google`) e os dois e-mails em `EMAILS_PERMITIDOS`.
+
+Enquanto isso, `build`, `lint`, `tsc` e os testes passam — mas **nenhuma tela foi executada contra um banco real**. Toda a camada de dados e de UI está verificada apenas por tipagem e compilação. Os primeiros erros de integração aparecem no `npm run dev` com credenciais válidas, e é esperado que apareçam.
