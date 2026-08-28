@@ -188,8 +188,10 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
                 inputMode="numeric"
                 value={alert}
                 onChange={(e) => setAlert(e.target.value)}
-                placeholder="7"
-                className="w-28"
+                // Palavra, não número: um "7" cinza no campo se lê como valor
+                // preenchido — ainda mais contradizendo o cálculo logo abaixo.
+                placeholder="automático"
+                className="w-36"
               />
               <span className="text-sm text-muted-foreground">dias antes</span>
             </div>
