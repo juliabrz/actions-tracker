@@ -33,6 +33,10 @@ type Props = {
   }
 }
 
+function soDigitos(value: string): string {
+  return value.replace(/\D/g, "")
+}
+
 function positiveIntOrNull(value: string): number | null {
   const n = Number(value)
   return value.trim() !== "" && Number.isFinite(n) && n > 0 ? Math.round(n) : null
@@ -163,15 +167,18 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
         <div className="pop-panel space-y-5 p-4">
           <div className="space-y-2">
             <Label htmlFor="guess">De quanto em quanto tempo você acha que faz?</Label>
-            <Input
-              id="guess"
-              type="number"
-              min={1}
-              inputMode="numeric"
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              placeholder="dias"
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                id="guess"
+                type="text"
+                inputMode="numeric"
+                value={guess}
+                onChange={(e) => setGuess(soDigitos(e.target.value))}
+                placeholder="opcional"
+                className="w-36"
+              />
+              <span className="text-sm text-muted-foreground">dias</span>
+            </div>
             <p className="text-xs text-muted-foreground">
               Só um palpite para os primeiros dias. É descartado assim que existir
               um ciclo medido de verdade.
@@ -183,11 +190,10 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
             <div className="flex items-center gap-2">
               <Input
                 id="alert"
-                type="number"
-                min={1}
+                type="text"
                 inputMode="numeric"
                 value={alert}
-                onChange={(e) => setAlert(e.target.value)}
+                onChange={(e) => setAlert(soDigitos(e.target.value))}
                 // Palavra, não número: um "7" cinza no campo se lê como valor
                 // preenchido — ainda mais contradizendo o cálculo logo abaixo.
                 placeholder="automático"
