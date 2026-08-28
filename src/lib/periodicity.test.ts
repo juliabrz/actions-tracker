@@ -237,10 +237,33 @@ describe("urgency ordering", () => {
     expect([later, sooner].sort(compareUrgency)[0]).toBe(sooner)
   })
 
-  it("an unhighlighted activity does not take the top even when overdue", () => {
-    const unhighlighted = estimate(series("2025-01-01", [30]), NO_SETTINGS, "2025-12-01")
-    const highlighted = estimate(series("2025-01-01", [30, 30]), NO_SETTINGS, "2025-04-01")
-    expect([unhighlighted, highlighted].sort(compareUrgency)[0]).toBe(highlighted)
+  it("ranks due today above due in five days, even on a weak estimate", () => {
+    // Um único ciclo medido: estimativa fraca, mas vence hoje.
+    // Ocorrências 01-01 e 01-31 → intervalo 30 → próxima em 2025-03-02.
+    const dueTodayWeak = estimate(series("2025-01-01", [30]), NO_SETTINGS, "2025-03-02")
+    // Três ciclos medidos: estimativa boa, mas ainda faltam dias.
+    const dueLaterStrong = estimate(
+      series("2025-01-01", [30, 30, 30]),
+      NO_SETTINGS,
+      "2025-04-26",
+    )
+    expect(dueTodayWeak.daysRemaining).toBe(0)
+    expect(dueTodayWeak.confidence).toBe("weak")
+    expect(dueLaterStrong.daysRemaining).toBe(5)
+    expect(dueLaterStrong.confidence).toBe("good")
+
+    expect([dueLaterStrong, dueTodayWeak].sort(compareUrgency)[0]).toBe(dueTodayWeak)
+  })
+
+  it("confiança não desempata: só a urgência no tempo ordena", () => {
+    const overdueWeak = estimate(series("2025-01-01", [30]), NO_SETTINGS, "2025-12-01")
+    const onTrackStrong = estimate(
+      series("2025-01-01", [30, 30]),
+      NO_SETTINGS,
+      "2025-03-05",
+    )
+    expect(overdueWeak.highlight).toBe(false)
+    expect([onTrackStrong, overdueWeak].sort(compareUrgency)[0]).toBe(overdueWeak)
   })
 
   it("no forecast sinks to the bottom", () => {

@@ -156,11 +156,15 @@ const STATUS_WEIGHT: Record<Status, number> = {
   no_forecast: 3,
 }
 
+/**
+ * Ordena só por urgência no tempo. Confiança não desempata: algo que vence hoje
+ * fica acima de algo que vence em cinco dias, ainda que a estimativa seja
+ * fraca — esconder o mais urgente por tecnicalidade estatística é o oposto do
+ * que a lista existe para fazer. A incerteza aparece na cor, não na posição.
+ */
 export function compareUrgency(a: Forecast, b: Forecast): number {
-  // Without highlight (a single interval) an activity does not compete for the
-  // top, even when past due.
-  const weightA = a.highlight ? STATUS_WEIGHT[a.status] : STATUS_WEIGHT.on_track
-  const weightB = b.highlight ? STATUS_WEIGHT[b.status] : STATUS_WEIGHT.on_track
+  const weightA = STATUS_WEIGHT[a.status]
+  const weightB = STATUS_WEIGHT[b.status]
   if (weightA !== weightB) return weightA - weightB
 
   const daysA = a.daysRemaining ?? Number.POSITIVE_INFINITY

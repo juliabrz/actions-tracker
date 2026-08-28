@@ -113,9 +113,11 @@ diasRestantes = proximaData − hoje          (negativo = atrasada)
 | `aproximando` | `0 ≤ diasRestantes ≤ limiar` |
 | `atrasada` | `diasRestantes < 0` |
 
-**A ordenação por urgência** só se aplica a ações com **2 ou mais intervalos reais**: com um único ciclo medido a ação não disputa o topo da lista.
+**A ordenação é puramente por urgência no tempo**, e a confiança não entra nela. Algo que vence hoje fica acima de algo que vence em cinco dias mesmo que a estimativa seja fraca — enterrar o mais urgente por tecnicalidade estatística é o oposto do que a lista existe para fazer.
 
-Mas ela continua **colorida no tom do próprio estado, em intensidade menor** — não cinza. Pintar de neutro algo que vence hoje é sinal falso: o texto anuncia urgência e a cor desmente. A regra sempre foi *não gritar*, nunca *ficar mudo*.
+A incerteza aparece **na cor e no peso da fonte**: com menos de dois ciclos medidos a linha usa o tom do próprio estado em intensidade menor, e sem negrito. Nunca em cinza neutro — pintar de neutro algo que vence hoje é sinal falso, com o texto anunciando urgência e a cor desmentindo.
+
+> Isto revisa a decisão original, que impedia estimativa fraca de subir na lista. A intenção era *não gritar*; na prática virou *esconder*.
 
 > Nota: esta regra nasceu como "notificar a partir de 2 intervalos, exibir a partir de 1". Como o v1 não tem notificação, "notificar" foi traduzido para "destacar e ordenar por urgência".
 
