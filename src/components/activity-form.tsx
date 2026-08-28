@@ -161,7 +161,7 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
       </button>
 
       {showAdvanced && (
-        <div className="space-y-5 rounded-md border p-4">
+        <div className="pop-panel space-y-5 p-4">
           <div className="space-y-2">
             <Label htmlFor="guess">De quanto em quanto tempo você acha que faz?</Label>
             <Input

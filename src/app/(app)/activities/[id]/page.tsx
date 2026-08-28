@@ -9,7 +9,6 @@ import {
   DeleteOccurrenceButton,
 } from "@/components/destructive-buttons"
 import { DoneButton } from "@/components/done-button"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getActivity } from "@/lib/activities"
 import {
@@ -32,7 +31,10 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 p-4">
       <div>
-        <Link href="/" className="text-sm text-muted-foreground hover:underline">
+        <Link
+          href="/"
+          className="font-heading text-[10px] text-muted-foreground hover:text-ink hover:underline"
+        >
           ← todas as ações
         </Link>
       </div>
@@ -42,10 +44,14 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
           <h1 className="text-2xl font-semibold">{activity.name}</h1>
           <DoneButton activityId={activity.id} name={activity.name} />
         </div>
-        {activity.scope === "shared" && <Badge variant="secondary">compartilhada</Badge>}
+        {activity.scope === "shared" && (
+          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2 py-0.5 font-heading text-[10px] text-ink">
+            nós duas
+          </span>
+        )}
       </header>
 
-      <section className="space-y-1 rounded-md border p-4">
+      <section className="pop-panel space-y-1 p-4">
         <p className="text-lg font-medium">{describeDue(forecast)}</p>
         <p className="text-sm text-muted-foreground">
           {[describeInterval(forecast.intervalDays), describeConfidence(forecast)]
@@ -69,13 +75,13 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
       <BackfillForm activityId={activity.id} />
 
       <section className="space-y-2">
-        <h2 className="text-sm font-medium text-muted-foreground">
-          Histórico ({activity.occurrences.length})
+        <h2 className="font-heading text-[11px] text-muted-foreground">
+          histórico ({activity.occurrences.length})
         </h2>
         {activity.occurrences.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum registro ainda.</p>
         ) : (
-          <ul className="divide-y rounded-md border">
+          <ul className="pop-panel divide-y-2 divide-border overflow-hidden p-0">
             {activity.occurrences.map((o) => (
               <li key={o.id} className="flex items-center justify-between gap-2 px-3 py-2">
                 <div className="min-w-0">
@@ -104,7 +110,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
         )}
       </section>
 
-      <footer className="flex items-center gap-2 border-t pt-4">
+      <footer className="flex items-center gap-2 border-t-2 border-border pt-4">
         <Button asChild variant="ghost" size="sm">
           <Link href={`/activities/${activity.id}/edit`}>Editar</Link>
         </Button>

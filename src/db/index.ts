@@ -32,7 +32,11 @@ const isPglite = process.env.DATABASE_URL.startsWith("pglite://")
 const globalForDb = globalThis as unknown as { __db?: Db }
 
 async function createPglite(): Promise<Db> {
-  if (process.env.NODE_ENV === "production") {
+  // Guards a *running* production server, not `next build`. The build runs with
+  // NODE_ENV=production even locally, and refusing there would mean you cannot
+  // build the app while pointing at the development database.
+  const isBuild = process.env.NEXT_PHASE === "phase-production-build"
+  if (process.env.NODE_ENV === "production" && !isBuild) {
     throw new Error("pglite:// is a development-only DATABASE_URL")
   }
   const { PGlite } = await import("@electric-sql/pglite")

@@ -1,62 +1,60 @@
 import Link from "next/link"
 
 import { DoneButton } from "@/components/done-button"
-import { Badge } from "@/components/ui/badge"
 import type { ActivityWithForecast } from "@/lib/activities"
 import { describeConfidence, describeDue, describeInterval } from "@/lib/format"
 import type { Status } from "@/lib/periodicity"
 
+type Tone = { stripe: string; text: string }
+
 /**
  * Duas intensidades por estado. Com menos de dois ciclos medidos a ação não
  * disputa o topo da lista (spec §4.5) — mas continua colorida, em tom mais
- * fraco. Pintar de cinza algo que vence hoje é sinal falso: o texto anuncia
- * urgência e a cor desmente. "Não gritar" nunca quis dizer "ficar mudo".
+ * fraco. Pintar de neutro algo que vence hoje é sinal falso.
  */
-type Tone = { border: string; text: string }
-
 const TONE: Record<Status, { strong: Tone; soft: Tone }> = {
   overdue: {
-    strong: { border: "border-l-red-500", text: "text-red-600 dark:text-red-400" },
-    soft: { border: "border-l-red-500/40", text: "text-red-600/70 dark:text-red-400/70" },
+    strong: { stripe: "bg-destructive", text: "text-destructive" },
+    soft: { stripe: "bg-destructive/40", text: "text-destructive/70" },
   },
   due_soon: {
-    strong: { border: "border-l-amber-500", text: "text-amber-600 dark:text-amber-400" },
-    soft: {
-      border: "border-l-amber-500/40",
-      text: "text-amber-600/70 dark:text-amber-400/70",
-    },
+    strong: { stripe: "bg-butter", text: "text-ink/80 dark:text-butter" },
+    soft: { stripe: "bg-butter/40", text: "text-ink/55 dark:text-butter/70" },
   },
   on_track: {
-    strong: { border: "border-l-emerald-500", text: "text-muted-foreground" },
-    soft: { border: "border-l-emerald-500/40", text: "text-muted-foreground" },
+    strong: { stripe: "bg-mint", text: "text-muted-foreground" },
+    soft: { stripe: "bg-mint/40", text: "text-muted-foreground" },
   },
   no_forecast: {
-    strong: { border: "border-l-muted", text: "text-muted-foreground" },
-    soft: { border: "border-l-muted", text: "text-muted-foreground" },
+    strong: { stripe: "bg-lilac", text: "text-muted-foreground" },
+    soft: { stripe: "bg-lilac", text: "text-muted-foreground" },
   },
 }
 
-
 export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
   const { forecast } = activity
-
   const tone = TONE[forecast.status][forecast.highlight ? "strong" : "soft"]
 
   return (
-    <li className={`flex items-center gap-3 border-l-4 ${tone.border} bg-card py-3 pl-3 pr-2`}>
-      <Link href={`/activities/${activity.id}`} className="min-w-0 flex-1">
+    <li className="pop-panel flex items-stretch overflow-hidden p-0">
+      {/* Faixa de estado: com contorno em volta do card inteiro, uma borda
+          esquerda colorida sumiria — então a faixa vira um bloco próprio. */}
+      <span
+        aria-hidden
+        className={`w-3 shrink-0 border-r-2 border-border ${tone.stripe}`}
+      />
+
+      <Link href={`/activities/${activity.id}`} className="min-w-0 flex-1 py-3 pl-3 pr-2">
         <div className="flex items-center gap-2">
           <span className="truncate font-medium">{activity.name}</span>
           {activity.scope === "shared" && (
-            <Badge variant="secondary" className="shrink-0 text-[10px]">
-              compartilhada
-            </Badge>
+            <span className="shrink-0 rounded-full border-2 border-border bg-seafoam px-1.5 font-heading text-[9px] text-ink">
+              nós duas
+            </span>
           )}
         </div>
 
-        <div
-          className={`text-sm ${tone.text} ${forecast.highlight ? "font-medium" : ""}`}
-        >
+        <div className={`text-sm ${tone.text} ${forecast.highlight ? "font-medium" : ""}`}>
           {describeDue(forecast)}
         </div>
 
@@ -73,7 +71,9 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
         </div>
       </Link>
 
-      <DoneButton activityId={activity.id} name={activity.name} />
+      <div className="flex items-center pr-2">
+        <DoneButton activityId={activity.id} name={activity.name} />
+      </div>
     </li>
   )
 }

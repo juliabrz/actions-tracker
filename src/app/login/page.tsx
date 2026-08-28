@@ -8,34 +8,42 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   if (session?.user) redirect("/")
 
   const { error } = await searchParams
-  const recusado = error === "AccessDenied"
+  const denied = error === "AccessDenied"
 
   return (
     <main className="flex flex-1 items-center justify-center p-6">
-      <div className="w-full max-w-sm space-y-6 text-center">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">Activity Tracker</h1>
+      <div className="pop-panel w-full max-w-sm overflow-hidden p-0">
+        {/* Barra de título da janelinha. */}
+        <div className="flex items-center justify-between border-b-2 border-border bg-candy px-3 py-2">
+          <span className="font-heading text-xs text-ink">activity tracker</span>
+          <span aria-hidden className="flex gap-1">
+            <span className="size-3 rounded-full border-2 border-ink bg-butter" />
+            <span className="size-3 rounded-full border-2 border-ink bg-mint" />
+          </span>
+        </div>
+
+        <div className="space-y-5 p-6 text-center">
           <p className="text-sm text-muted-foreground">
             De quanto em quanto tempo você faz cada coisa.
           </p>
+
+          {denied && (
+            <p className="rounded-md border-2 border-border bg-destructive/20 p-3 text-sm text-ink dark:text-foreground">
+              Esta conta não tem acesso ao app.
+            </p>
+          )}
+
+          <form
+            action={async () => {
+              "use server"
+              await signIn("google", { redirectTo: "/" })
+            }}
+          >
+            <Button type="submit" className="w-full font-heading text-xs" size="lg">
+              entrar com google
+            </Button>
+          </form>
         </div>
-
-        {recusado && (
-          <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            Esta conta não tem acesso ao app.
-          </p>
-        )}
-
-        <form
-          action={async () => {
-            "use server"
-            await signIn("google", { redirectTo: "/" })
-          }}
-        >
-          <Button type="submit" className="w-full" size="lg">
-            Entrar com Google
-          </Button>
-        </form>
       </div>
     </main>
   )

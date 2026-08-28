@@ -44,8 +44,8 @@ export function BackfillForm({ activityId }: { activityId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-md border p-4">
-      <p className="text-sm font-medium">Adicionar um registro antigo</p>
+    <form onSubmit={submit} className="pop-panel space-y-3 p-4">
+      <p className="font-heading text-[11px] text-muted-foreground">adicionar registro antigo</p>
 
       <div className="flex gap-2">
         <Input

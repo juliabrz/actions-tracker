@@ -25,15 +25,15 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
     <div className="mx-auto w-full max-w-2xl">
       {/* Os filtros ganham a linha inteira e rolam: numa tela estreita eles
           disputavam espaço com o botão de criar e o empurravam para fora. */}
-      <nav className="flex gap-1 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <nav className="flex gap-2 overflow-x-auto px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {FILTERS.map(({ value, label }) => (
           <Link
             key={value}
             href={value === "all" ? "/" : `/?f=${value}`}
-            className={`shrink-0 rounded-full px-3 py-1 text-sm ${
+            className={`shrink-0 rounded-full border-2 border-border px-3 py-1 font-heading text-[11px] transition-transform ${
               filter === value
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-candy text-ink shadow-pop-sm"
+                : "bg-card text-muted-foreground hover:bg-bubblegum hover:text-ink"
             }`}
           >
             {label}
@@ -42,7 +42,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       </nav>
 
       {activities.length === 0 ? (
-        <div className="px-4 py-16 text-center">
+        <div className="pop-panel mx-4 px-4 py-14 text-center">
           <p className="text-sm text-muted-foreground">
             {filter === "all"
               ? "Nada cadastrado ainda. Comece pela coisa que você mais esquece."
@@ -50,16 +50,19 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
           </p>
         </div>
       ) : (
-        <ul className="divide-y border-y">
+        <ul className="space-y-3 px-4">
           {activities.map((activity) => (
             <ActivityRow key={activity.id} activity={activity} />
           ))}
         </ul>
       )}
 
-      <div className="px-4 py-6">
-        <Link href="/archived" className="text-xs text-muted-foreground hover:underline">
-          Ver arquivadas
+      <div className="px-4 py-8">
+        <Link
+          href="/archived"
+          className="font-heading text-[10px] text-muted-foreground hover:text-ink hover:underline"
+        >
+          ver arquivadas
         </Link>
       </div>
 
@@ -68,7 +71,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       <Button
         asChild
         size="lg"
-        className="fixed right-4 bottom-6 z-20 rounded-full shadow-lg"
+        className="fixed right-4 bottom-6 z-20 rounded-full font-heading text-xs"
       >
         <Link href="/activities/new">
           <Plus className="size-5" aria-hidden />
