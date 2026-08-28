@@ -3,14 +3,13 @@ import { redirect } from "next/navigation"
 
 import { auth, signOut } from "@/auth"
 import { Star } from "@/components/stickers"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
-  const { name, image } = session.user
+  const { name } = session.user
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -24,21 +23,14 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             </span>
           </div>
 
-          {/* Controles de janela, como o ✕ da referência. A pastilha branca de
-              antes usava o tratamento dos cards de conteúdo, então parecia um
-              card do corpo da página caído em cima da barra. Aqui os dois
-              elementos têm a mesma altura e o mesmo contorno: leem-se como um
-              conjunto, não como uma bolinha solta ao lado de um link. */}
-          <div className="flex items-center gap-1.5">
-            <Avatar
-              className="size-7 border-2 border-ink bg-cream"
-              title={name ?? undefined}
-            >
-              <AvatarImage src={image ?? undefined} alt="" />
-              <AvatarFallback className="bg-cream font-heading text-[10px] text-ink">
-                {name?.[0]?.toUpperCase() ?? "?"}
-              </AvatarFallback>
-            </Avatar>
+          {/* Nome escrito no lugar da bolinha com a inicial: "J" exige decodificar
+              e nao cabe em duas contas que dividem atividades. O sair e o ✕ da
+              barra de titulo, em vermelho proprio — o destructive da paleta e
+              rosado demais e sumiria contra o rosa daqui. */}
+          <div className="flex items-center gap-2">
+            <span className="font-heading text-[10px] text-ink" title={name ?? undefined}>
+              {(name ?? "").split(" ")[0].toLowerCase()}
+            </span>
 
             <form
               className="flex"
@@ -53,7 +45,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
                 size="icon"
                 title="Sair"
                 aria-label={`Sair da conta de ${name ?? "usuária"}`}
-                className="size-7 rounded-md border-2 border-ink bg-seafoam text-ink transition-transform hover:-translate-y-px hover:bg-mint"
+                className="size-7 rounded-md border-2 border-ink bg-cherry text-cream transition-transform hover:-translate-y-px hover:bg-cherry/85"
               >
                 <X className="size-4" strokeWidth={3} aria-hidden />
               </Button>
