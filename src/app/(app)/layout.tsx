@@ -42,7 +42,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
                 type="submit"
                 variant="ghost"
                 size="sm"
-                className="font-heading text-xs text-ink hover:bg-bubblegum"
+                className="text-xs text-ink hover:bg-bubblegum"
               >
                 sair
               </Button>

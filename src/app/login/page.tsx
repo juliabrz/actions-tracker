@@ -39,8 +39,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
               await signIn("google", { redirectTo: "/" })
             }}
           >
-            <Button type="submit" className="w-full font-heading text-xs" size="lg">
-              entrar com google
+            <Button type="submit" className="w-full" size="lg">
+              Entrar com Google
             </Button>
           </form>
         </div>

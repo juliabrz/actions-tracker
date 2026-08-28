@@ -33,7 +33,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
       <div>
         <Link
           href="/"
-          className="font-heading text-[10px] text-muted-foreground hover:text-ink hover:underline"
+          className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline"
         >
           ← todas as ações
         </Link>
@@ -45,7 +45,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
           <DoneButton activityId={activity.id} name={activity.name} />
         </div>
         {activity.scope === "shared" && (
-          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2 py-0.5 font-heading text-[10px] text-ink">
+          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink">
             nós duas
           </span>
         )}
@@ -75,8 +75,8 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
       <BackfillForm activityId={activity.id} />
 
       <section className="space-y-2">
-        <h2 className="font-heading text-[11px] text-muted-foreground">
-          histórico ({activity.occurrences.length})
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          Histórico ({activity.occurrences.length})
         </h2>
         {activity.occurrences.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum registro ainda.</p>

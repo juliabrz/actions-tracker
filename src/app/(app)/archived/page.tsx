@@ -9,10 +9,10 @@ export default async function ArchivedPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-4 p-4">
-      <Link href="/" className="font-heading text-[10px] text-muted-foreground hover:text-ink hover:underline">
+      <Link href="/" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline">
         ← todas as ações
       </Link>
-      <h1 className="font-heading text-base text-ink dark:text-foreground">arquivadas</h1>
+      <h1 className="text-xl font-semibold">Arquivadas</h1>
 
       {activities.length === 0 ? (
         <p className="text-sm text-muted-foreground">Nada arquivado.</p>

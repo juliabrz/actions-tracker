@@ -30,7 +30,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
           <Link
             key={value}
             href={value === "all" ? "/" : `/?f=${value}`}
-            className={`shrink-0 rounded-full border-2 border-border px-3 py-1 font-heading text-[11px] transition-transform ${
+            className={`shrink-0 rounded-full border-2 border-border px-3 py-1 text-[13px] font-medium transition-transform ${
               filter === value
                 ? "bg-candy text-ink shadow-pop-sm"
                 : "bg-card text-muted-foreground hover:bg-bubblegum hover:text-ink"
@@ -60,7 +60,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       <div className="px-4 py-8">
         <Link
           href="/archived"
-          className="font-heading text-[10px] text-muted-foreground hover:text-ink hover:underline"
+          className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline"
         >
           ver arquivadas
         </Link>
@@ -71,7 +71,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       <Button
         asChild
         size="lg"
-        className="fixed right-4 bottom-6 z-20 rounded-full font-heading text-xs"
+        className="fixed right-4 bottom-6 z-20 rounded-full"
       >
         <Link href="/activities/new">
           <Plus className="size-5" aria-hidden />
