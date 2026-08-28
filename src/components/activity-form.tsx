@@ -16,12 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { today } from "@/lib/dates"
+import { automaticAlertDays } from "@/lib/periodicity"
 
 type Scope = "personal" | "shared"
 
 type Props = {
-  /** O que o alerta automático daria hoje, para o campo não parecer arbitrário. */
-  automaticAlertDays?: number | null
+  /** Intervalo já medido desta ação, quando existe. Alimenta a sugestão de aviso. */
+  measuredIntervalDays?: number | null
   activity?: {
     id: string
     name: string
@@ -36,7 +37,7 @@ function positiveIntOrNull(value: string): number | null {
   return value.trim() !== "" && Number.isFinite(n) && n > 0 ? Math.round(n) : null
 }
 
-export function ActivityForm({ activity, automaticAlertDays }: Props) {
+export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   const editing = Boolean(activity)
   const router = useRouter()
   const [pending, start] = useTransition()
@@ -51,6 +52,12 @@ export function ActivityForm({ activity, automaticAlertDays }: Props) {
   const [lastDoneOn, setLastDoneOn] = useState("")
   const [guess, setGuess] = useState(activity?.guessedIntervalDays?.toString() ?? "")
   const [alert, setAlert] = useState(activity?.alertDaysBefore?.toString() ?? "")
+
+  // Sugestão viva: o palpite que você está digitando manda, e na falta dele
+  // vale o intervalo já medido. Só sugere — preencher o campo gravaria um
+  // override, que congela o valor enquanto o automático acompanha o ciclo.
+  const referenceInterval = positiveIntOrNull(guess) ?? measuredIntervalDays ?? null
+  const suggestedAlert = automaticAlertDays(referenceInterval)
 
   function submit(event: React.FormEvent) {
     event.preventDefault()
@@ -163,14 +170,38 @@ export function ActivityForm({ activity, automaticAlertDays }: Props) {
               />
               <span className="text-sm text-muted-foreground">dias antes</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Deixe vazio para automático: quanto mais longo o ciclo, maior a
-              antecedência
-              {automaticAlertDays != null
-                ? ` — hoje daria ${automaticAlertDays} ${automaticAlertDays === 1 ? "dia" : "dias"}`
-                : ""}
-              .
-            </p>
+            {alert.trim() === "" ? (
+              <p className="text-xs text-muted-foreground">
+                Vazio significa automático, proporcional ao ciclo.
+                {suggestedAlert != null ? (
+                  <>
+                    {" "}
+                    Com {referenceInterval} dias de ciclo, isso dá{" "}
+                    <strong>{suggestedAlert} {suggestedAlert === 1 ? "dia" : "dias"}</strong>.{" "}
+                    <button
+                      type="button"
+                      onClick={() => setAlert(String(suggestedAlert))}
+                      className="underline underline-offset-2 hover:no-underline"
+                    >
+                      Fixar esse valor
+                    </button>
+                  </>
+                ) : (
+                  " Quanto mais longo o ciclo, maior a antecedência."
+                )}
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Valor fixo: não muda quando o ciclo mudar.{" "}
+                <button
+                  type="button"
+                  onClick={() => setAlert("")}
+                  className="underline underline-offset-2 hover:no-underline"
+                >
+                  Voltar ao automático
+                </button>
+              </p>
+            )}
           </div>
         </div>
       )}

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import { auth } from "@/auth"
 import { ActivityForm } from "@/components/activity-form"
 import { getActivity } from "@/lib/activities"
-import { automaticAlertDays } from "@/lib/periodicity"
 
 export default async function EditActivityPage({
   params,
@@ -18,7 +17,7 @@ export default async function EditActivityPage({
     <div className="mx-auto w-full max-w-md space-y-6 p-4">
       <h1 className="text-xl font-semibold">Editar ação</h1>
       <ActivityForm
-        automaticAlertDays={automaticAlertDays(activity.forecast.intervalDays)}
+        measuredIntervalDays={activity.forecast.intervalDays}
         activity={{
           id: activity.id,
           name: activity.name,
