@@ -24,7 +24,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="flex shrink-0 items-center gap-2">
               <Star className="size-4 text-butter" />
               {/* Some no celular: aí o espaço vale mais para a navegação. */}
-              <span className="hidden font-heading text-sm tracking-tight text-ink sm:inline">
+              <span className="hidden font-pixel text-sm tracking-tight text-ink sm:inline">
                 activity tracker
               </span>
             </Link>
@@ -34,7 +34,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
           <div className="flex shrink-0 items-center gap-2">
             <span
-              className="hidden font-heading text-[10px] text-ink sm:inline"
+              className="hidden font-pixel text-[10px] text-ink sm:inline"
               title={name ?? undefined}
             >
               {(name ?? "").split(" ")[0].toLowerCase()}

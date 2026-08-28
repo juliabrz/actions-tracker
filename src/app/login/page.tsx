@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       <div className="pop-panel w-full max-w-sm overflow-hidden p-0">
         {/* Barra de título da janelinha. */}
         <div className="flex items-center justify-between border-b-2 border-border bg-candy px-3 py-2">
-          <span className="font-heading text-xs text-ink">activity tracker</span>
+          <span className="font-pixel text-xs text-ink">activity tracker</span>
           <Flower className="size-5 text-butter" />
         </div>
 

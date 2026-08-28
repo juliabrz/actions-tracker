@@ -29,7 +29,7 @@ export function NavLinks() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`rounded-md border-2 px-2.5 py-1 font-heading text-[10px] transition-transform hover:-translate-y-px ${
+            className={`rounded-md border-2 px-2.5 py-1 font-pixel text-[10px] transition-transform hover:-translate-y-px ${
               active
                 ? "border-ink bg-cream text-ink"
                 : "border-transparent text-ink/70 hover:border-ink hover:bg-bubblegum hover:text-ink"

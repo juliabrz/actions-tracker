@@ -20,7 +20,7 @@ export function PillLink({
   return (
     <Link
       href={href}
-      className={`pop-panel inline-flex items-center gap-2 px-3 py-1.5 font-heading text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum ${className}`}
+      className={`pop-panel inline-flex items-center gap-2 px-3 py-1.5 font-pixel text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum ${className}`}
     >
       {children}
     </Link>

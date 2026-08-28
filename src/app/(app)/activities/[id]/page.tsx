@@ -33,9 +33,9 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
       <BackLink />
 
       <header className="space-y-2">
-        <h1 className="font-display text-2xl text-foreground">{activity.name}</h1>
+        <h1 className="font-heading text-2xl text-foreground">{activity.name}</h1>
         {activity.scope === "shared" && (
-          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2.5 py-1 font-heading text-[10px] text-ink">
+          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2.5 py-1 font-pixel text-[10px] text-ink">
             nós duas
           </span>
         )}

@@ -21,7 +21,7 @@ const display = Fredoka({
 
 /** Fonte de display. Só em títulos: nome de ação é conteúdo e precisa de leitura fácil. */
 const pixel = Silkscreen({
-  variable: "--font-pixel",
+  variable: "--font-silkscreen",
   subsets: ["latin"],
   weight: ["400", "700"],
 })
