@@ -24,23 +24,26 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Avatar className="size-7 border-2 border-ink">
+            <Avatar className="size-7 border-2 border-ink" title={name ?? undefined}>
               <AvatarImage src={image ?? undefined} alt={name ?? ""} />
-              <AvatarFallback className="bg-cream text-xs text-ink">
+              <AvatarFallback className="bg-cream text-xs font-semibold text-ink">
                 {name?.[0]?.toUpperCase() ?? "?"}
               </AvatarFallback>
             </Avatar>
             <form
+              className="flex"
               action={async () => {
                 "use server"
                 await signOut({ redirectTo: "/login" })
               }}
             >
+              {/* Pastilha, como todo o resto que clica: texto solto no meio da
+                  barra não se lia como botão. */}
               <Button
                 type="submit"
                 variant="ghost"
                 size="sm"
-                className="text-xs text-ink hover:bg-bubblegum"
+                className="pop-panel h-auto px-2.5 py-1 font-heading text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum"
               >
                 sair
               </Button>
