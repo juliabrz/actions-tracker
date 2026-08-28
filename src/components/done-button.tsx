@@ -62,34 +62,39 @@ export function DoneButton({
 
       toast.custom(
         (id) => (
-          <div className="pop-panel flex w-[min(22rem,90vw)] items-center gap-2 p-3">
-            <span className="min-w-0 flex-1 truncate text-sm">
-              <strong className="font-medium">{name}</strong> — registrado hoje
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                toast.dismiss(id)
-                openDetails(occurrenceId)
-              }}
-              className="shrink-0 rounded-md border-2 border-border bg-seafoam px-2 py-1 text-xs font-medium text-ink"
-            >
-              Detalhes
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                toast.dismiss(id)
-                start(async () => {
-                  const undone = await deleteOccurrence(occurrenceId)
-                  if (undone.ok) toast("Registro desfeito.")
-                  else toast.error(undone.error)
-                })
-              }}
-              className="shrink-0 rounded-md border-2 border-border bg-candy px-2 py-1 text-xs font-medium text-ink"
-            >
-              Desfazer
-            </button>
+          // Empilhado, não em linha: nome de atividade é livre e longo, e numa
+          // linha só com os botões ao lado ele era truncado.
+          <div className="pop-panel w-[min(24rem,92vw)] space-y-2 p-3">
+            <p className="text-sm leading-snug">
+              <strong className="font-semibold">{name}</strong>
+              <span className="text-muted-foreground"> — registrado hoje</span>
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  toast.dismiss(id)
+                  openDetails(occurrenceId)
+                }}
+                className="rounded-md border-2 border-border bg-seafoam px-2.5 py-1 text-xs font-medium text-ink"
+              >
+                Detalhes
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  toast.dismiss(id)
+                  start(async () => {
+                    const undone = await deleteOccurrence(occurrenceId)
+                    if (undone.ok) toast("Registro desfeito.")
+                    else toast.error(undone.error)
+                  })
+                }}
+                className="rounded-md border-2 border-border bg-candy px-2.5 py-1 text-xs font-medium text-ink"
+              >
+                Desfazer
+              </button>
+            </div>
           </div>
         ),
         { duration: 10_000 },
