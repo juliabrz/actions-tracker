@@ -72,7 +72,11 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
       </Link>
 
       <div className="flex items-center pr-2">
-        <DoneButton activityId={activity.id} name={activity.name} />
+        <DoneButton
+          activityId={activity.id}
+          name={activity.name}
+          doneToday={activity.doneToday}
+        />
       </div>
     </li>
   )

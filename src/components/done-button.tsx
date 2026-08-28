@@ -33,9 +33,11 @@ import { Label } from "@/components/ui/label"
 export function DoneButton({
   activityId,
   name,
+  doneToday,
 }: {
   activityId: string
   name: string
+  doneToday: boolean
 }) {
   const [pending, start] = useTransition()
   const [detailsFor, setDetailsFor] = useState<string | null>(null)
@@ -128,13 +130,24 @@ export function DoneButton({
 
   return (
     <>
+      {/* Já registrado hoje: o botão mostra o estado em vez de aceitar o toque e
+          devolver erro de duplicata. Colorido significa "dá para agir";
+          apagado, "já está feito". */}
       <Button
         size="icon"
         onClick={record}
-        disabled={pending}
-        aria-label={`Registrar que fiz "${name}" hoje`}
-        title="Registrar que fiz hoje"
-        className="size-9 shrink-0 rounded-full bg-mint text-ink transition-transform hover:scale-110 hover:bg-mint"
+        disabled={pending || doneToday}
+        aria-label={
+          doneToday
+            ? `"${name}" já foi registrada hoje`
+            : `Registrar que fiz "${name}" hoje`
+        }
+        title={doneToday ? "Já registrado hoje" : "Registrar que fiz hoje"}
+        className={`size-9 shrink-0 rounded-full transition-transform ${
+          doneToday
+            ? "bg-cream text-ink/35 disabled:opacity-100"
+            : "bg-mint text-ink hover:scale-110 hover:bg-mint"
+        }`}
       >
         <Check className="size-5" strokeWidth={3} aria-hidden />
       </Button>

@@ -5,6 +5,7 @@ import { and, eq, or } from "drizzle-orm"
 import { db } from "@/db"
 import { activities } from "@/db/schema"
 
+import { today } from "./dates"
 import { compareUrgency, estimate, type Forecast } from "./periodicity"
 
 export type Filter = "all" | "mine" | "shared"
@@ -20,6 +21,8 @@ export type ActivityWithForecast = {
   forecast: Forecast
   lastDoneBy: { id: string; name: string | null } | null
   occurrenceCount: number
+  /** Já tem registro na data de hoje: o botão de um toque não tem o que fazer. */
+  doneToday: boolean
 }
 
 /**
@@ -35,6 +38,8 @@ export async function listActivities(
   userId: string,
   { filter = "all", archived = false }: { filter?: Filter; archived?: boolean } = {},
 ): Promise<ActivityWithForecast[]> {
+  const hoje = today()
+
   const rows = await db.query.activities.findMany({
     where: and(visibleTo(userId), eq(activities.archived, archived)),
     with: {
@@ -63,6 +68,7 @@ export async function listActivities(
       alertDaysBefore: a.alertDaysBefore,
       occurrenceCount: a.occurrences.length,
       lastDoneBy: a.occurrences.at(-1)?.doneBy ?? null,
+      doneToday: a.occurrences.some((o) => o.date === hoje),
       forecast: estimate(a.occurrences, {
         guessedIntervalDays: a.guessedIntervalDays,
         alertDaysBefore: a.alertDaysBefore,
