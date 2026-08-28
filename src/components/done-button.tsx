@@ -10,7 +10,6 @@ import {
   updateOccurrence,
 } from "@/app/(app)/activities/actions"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -41,11 +40,9 @@ export function DoneButton({
   const [pending, start] = useTransition()
   const [detailsFor, setDetailsFor] = useState<string | null>(null)
   const [cost, setCost] = useState("")
-  const [approximate, setApproximate] = useState(false)
 
   function openDetails(occurrenceId: string) {
     setCost("")
-    setApproximate(false)
     setDetailsFor(occurrenceId)
   }
 
@@ -119,11 +116,7 @@ export function DoneButton({
     if (!detailsFor) return
     const occurrenceId = detailsFor
     start(async () => {
-      const result = await updateOccurrence({
-        occurrenceId,
-        approximate,
-        cost: cost || null,
-      })
+      const result = await updateOccurrence({ occurrenceId, cost: cost || null })
       if (!result.ok) {
         toast.error(result.error)
         return
@@ -151,37 +144,21 @@ export function DoneButton({
           <DialogHeader>
             <DialogTitle>{name}</DialogTitle>
             <DialogDescription>
-              Registrado hoje. Estes campos são opcionais.
+              Registrado hoje. Anotar o valor é opcional.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="details-cost">Quanto custou?</Label>
-              <Input
-                id="details-cost"
-                type="text"
-                inputMode="decimal"
-                value={cost}
-                onChange={(e) => setCost(e.target.value)}
-                placeholder="R$"
-                autoFocus
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="details-approximate"
-                checked={approximate}
-                onCheckedChange={(v) => setApproximate(v === true)}
-              />
-              <Label
-                htmlFor="details-approximate"
-                className="text-sm font-normal text-muted-foreground"
-              >
-                Na verdade foi outro dia (data aproximada)
-              </Label>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="details-cost">Quanto custou?</Label>
+            <Input
+              id="details-cost"
+              type="text"
+              inputMode="decimal"
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+              placeholder="R$"
+              autoFocus
+            />
           </div>
 
           <DialogFooter>

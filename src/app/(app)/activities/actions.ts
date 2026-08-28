@@ -57,15 +57,17 @@ export async function recordOccurrence(input: {
 }
 
 /**
- * Fills in the optional fields of an occurrence that already exists.
+ * Attaches the cost to an occurrence that already exists.
  *
  * Deliberately cannot change the date: date editing was rejected in favour of
  * delete-and-re-add (spec §3). This exists so the one-tap path stays one tap —
- * you log first, and attach cost or the approximate flag afterwards.
+ * you log first, and attach the cost afterwards.
+ *
+ * It also cannot mark the occurrence approximate: the one-tap button records
+ * today, so there is no uncertainty about the date to declare.
  */
 export async function updateOccurrence(input: {
   occurrenceId: string
-  approximate: boolean
   cost?: string | null
 }): Promise<Result> {
   const user = await requireUser()
@@ -79,7 +81,7 @@ export async function updateOccurrence(input: {
   await requireAccess(user.id, target.activityId)
   await db
     .update(occurrences)
-    .set({ approximate: input.approximate, cost: parseCost(input.cost) })
+    .set({ cost: parseCost(input.cost) })
     .where(eq(occurrences.id, input.occurrenceId))
 
   revalidatePath("/")
