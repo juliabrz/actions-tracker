@@ -5,7 +5,7 @@ import { WindowPanel } from "@/components/window-panel"
 export default function NewActivityPage() {
   return (
     <div className="mx-auto w-full max-w-md p-4">
-      <WindowPanel title="Nova ação" sticker={<Star className="size-5 text-butter" />}>
+      <WindowPanel title="Nova atividade" sticker={<Star className="size-5 text-butter" />}>
         <ActivityForm />
       </WindowPanel>
     </div>

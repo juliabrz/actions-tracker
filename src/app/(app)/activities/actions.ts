@@ -54,7 +54,7 @@ export async function recordOccurrence(input: {
     return { ok: true, data: { occurrenceId: created.id } }
   } catch (e) {
     if (isDuplicate(e)) {
-      return { ok: false, error: "Esta ação já foi registrada nesse dia." }
+      return { ok: false, error: "Esta atividade já foi registrada nesse dia." }
     }
     throw e
   }
@@ -120,7 +120,7 @@ export async function createActivity(input: {
   const user = await requireUser()
 
   const name = input.name.trim()
-  if (!name) return { ok: false, error: "Dê um nome para a ação." }
+  if (!name) return { ok: false, error: "Dê um nome para a atividade." }
 
   if (input.lastDoneOn) {
     if (!isValidDate(input.lastDoneOn)) return { ok: false, error: "Data inválida." }
@@ -166,7 +166,7 @@ export async function updateActivity(input: {
   await requireAccess(user.id, input.activityId)
 
   const name = input.name.trim()
-  if (!name) return { ok: false, error: "Dê um nome para a ação." }
+  if (!name) return { ok: false, error: "Dê um nome para a atividade." }
 
   await db
     .update(activities)

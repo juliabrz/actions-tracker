@@ -98,7 +98,7 @@ export function ArchiveButton({
             toast.error(result.error)
             return
           }
-          toast.success(archived ? "Ação reativada." : "Ação arquivada.")
+          toast.success(archived ? "Atividade reativada." : "Atividade arquivada.")
           if (archived) router.refresh()
           else router.push("/")
         })
@@ -143,7 +143,7 @@ export function DeleteActivityButton({
           <AlertDialogTitle>Excluir &ldquo;{name}&rdquo;?</AlertDialogTitle>
           <AlertDialogDescription>
             {occurrenceCount === 0
-              ? "A ação será removida. Não há histórico a perder."
+              ? "A atividade será removida. Não há histórico a perder."
               : `Os ${occurrenceCount} registros do histórico serão apagados junto, e a periodicidade medida se perde. Isso não tem desfazer.`}
             {" "}
             Se você só parou de fazer isso, prefira arquivar — some da lista e

@@ -31,7 +31,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
           <Link
             key={value}
             href={value === "all" ? "/" : `/?f=${value}`}
-            className={`shrink-0 rounded-full border-2 border-border px-3 py-1 text-[13px] font-medium transition-transform ${
+            className={`shrink-0 rounded-full border-2 border-border px-3 py-1.5 font-heading text-[11px] transition-transform ${
               filter === value
                 ? "bg-candy text-ink shadow-pop-sm"
                 : "bg-card text-muted-foreground hover:bg-bubblegum hover:text-ink"
@@ -74,11 +74,11 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       <Button
         asChild
         size="lg"
-        className="fixed right-4 bottom-6 z-20 rounded-full"
+        className="fixed right-4 bottom-6 z-20 rounded-full font-heading text-[11px]"
       >
         <Link href="/activities/new">
           <Plus className="size-5" aria-hidden />
-          Nova ação
+          Nova atividade
           <Star className="size-4 text-butter" />
         </Link>
       </Button>

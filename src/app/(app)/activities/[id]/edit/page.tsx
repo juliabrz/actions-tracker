@@ -17,7 +17,7 @@ export default async function EditActivityPage({
 
   return (
     <div className="mx-auto w-full max-w-md p-4">
-      <WindowPanel title="Editar ação" sticker={<Flower className="size-5 text-mint" />}>
+      <WindowPanel title="Editar atividade" sticker={<Flower className="size-5 text-mint" />}>
         <ActivityForm
           measuredIntervalDays={activity.forecast.intervalDays}
           activity={{

@@ -12,7 +12,7 @@ export default async function ArchivedPage() {
   return (
     <div className="mx-auto w-full max-w-2xl space-y-4 p-4">
       <Link href="/" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline">
-        ← todas as ações
+        ← todas as atividades
       </Link>
       
       <WindowPanel title="Arquivadas" sticker={<Star className="size-5 text-lilac" />}>

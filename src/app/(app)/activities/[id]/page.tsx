@@ -35,7 +35,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
           href="/"
           className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline"
         >
-          ← todas as ações
+          ← todas as atividades
         </Link>
       </div>
 

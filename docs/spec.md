@@ -191,7 +191,7 @@ occurrences
 
 **Código em inglês, produto em português.** Identificadores, comentários, nomes de tabela e coluna, rotas e descrições de teste são em inglês. Textos de tela e esta documentação são em português — quem usa o app são duas brasileiras.
 
-Uma nota de nomenclatura: o domínio chama de "ação" o que no código é **`Activity`**, não `Action`. A tradução direta colidiria com as Server Actions do Next.js, e `activities/actions.ts` se lê sozinho onde `actions/actions.ts` não se leria. O registro de uma ação feita é uma **`Occurrence`**.
+Uma nota de nomenclatura: a coisa que se repete chama-se **atividade** na interface e **`Activity`** no código. "Ação" foi descartado nos dois lados — em inglês colidiria com as Server Actions do Next.js (`activities/actions.ts` se lê sozinho onde `actions/actions.ts` não se leria), e em português deixava a tela divergindo do código sem ganho nenhum. O registro de uma atividade feita é uma **`Occurrence`**.
 
 **Supabase foi considerado e descartado.** Juntaria banco, auth e storage num serviço só, e seria a escolha certa se o objetivo fosse velocidade. Não é: o objetivo é aprender como as peças se encaixam, e o cliente Supabase puxa o código para fora dos padrões do Next.js.
 

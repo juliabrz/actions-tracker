@@ -87,7 +87,7 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
         return
       }
 
-      toast.success(editing ? "Ação atualizada." : "Ação criada.")
+      toast.success(editing ? "Atividade atualizada." : "Atividade criada.")
       router.push(activity ? `/activities/${activity.id}` : "/")
       router.refresh()
     })
@@ -232,7 +232,7 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={pending || !name.trim()}>
-          {pending ? "Salvando..." : editing ? "Salvar" : "Criar ação"}
+          {pending ? "Salvando..." : editing ? "Salvar" : "Criar atividade"}
         </Button>
         <Button type="button" variant="ghost" onClick={() => router.back()}>
           Cancelar
