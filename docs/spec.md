@@ -113,7 +113,9 @@ diasRestantes = proximaData − hoje          (negativo = atrasada)
 | `aproximando` | `0 ≤ diasRestantes ≤ limiar` |
 | `atrasada` | `diasRestantes < 0` |
 
-**Destaque visual e ordenação por urgência** só se aplicam a ações com **2 ou mais intervalos reais**. Com 1 intervalo a previsão aparece em cinza, sem cor de alerta e sem subir no topo.
+**A ordenação por urgência** só se aplica a ações com **2 ou mais intervalos reais**: com um único ciclo medido a ação não disputa o topo da lista.
+
+Mas ela continua **colorida no tom do próprio estado, em intensidade menor** — não cinza. Pintar de neutro algo que vence hoje é sinal falso: o texto anuncia urgência e a cor desmente. A regra sempre foi *não gritar*, nunca *ficar mudo*.
 
 > Nota: esta regra nasceu como "notificar a partir de 2 intervalos, exibir a partir de 1". Como o v1 não tem notificação, "notificar" foi traduzido para "destacar e ordenar por urgência".
 
