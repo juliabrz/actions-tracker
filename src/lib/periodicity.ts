@@ -144,9 +144,11 @@ export function estimate(
     else status = "on_track"
   }
 
-  // O adiamento expira sozinho: nada precisa limpá-lo para a atividade voltar.
+  // `snoozedUntil` é o dia em que ela VOLTA, não o último dia silenciada.
+  // Assim "adiar por 3 dias" silencia três dias e reaparece no terceiro — antes
+  // silenciava quatro, contando hoje, e no último exibia "adiada até hoje".
   const daysUntilActive = snoozedUntil ? daysBetween(todayStr, snoozedUntil) : null
-  const snoozed = daysUntilActive != null && daysUntilActive >= 0
+  const snoozed = daysUntilActive != null && daysUntilActive > 0
 
   return {
     intervalDays,

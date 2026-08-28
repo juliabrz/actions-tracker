@@ -141,7 +141,11 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 
 Uma atividade vencida que você não vai fazer agora pode ser adiada por 3 dias, 1 semana ou 1 mês, pelo relógio na própria linha. O botão só aparece em atividades vencidas ou chegando — nas demais não haveria o que adiar.
 
-**Adiar silencia, não remarca.** O intervalo, a próxima data e a confiança continuam saindo só das ocorrências: adiar um lembrete não é evidência sobre quando a atividade vence. O que muda é a apresentação — a linha sai do grupo urgente, ganha faixa neutra e passa a mostrar "adiada até 2 de set" no lugar do prazo. Entre as não-urgentes ela ordena pelo dia em que volta a importar.
+**Adiar silencia, não remarca.** O intervalo, a próxima data e a confiança continuam saindo só das ocorrências: adiar um lembrete não é evidência sobre quando a atividade vence. O que muda é a apresentação — a linha sai do grupo urgente, ganha faixa neutra e passa a mostrar "volta em 2 de set" no lugar do prazo. Entre as não-urgentes ela ordena pelo dia em que volta a importar.
+
+**Uma atividade adiada nunca "vence de novo".** Ela continua vencida o tempo todo; quando o adiamento acaba, reaparece com o atraso **acumulado desde a data original** — adiada com 2 dias de atraso, volta com 9 se ficou uma semana silenciada. Adiar compra silêncio, não prazo.
+
+`snoozed_until` guarda **o dia do retorno**, não o último dia silenciado. "Adiar por 3 dias" silencia três dias e reaparece no terceiro.
 
 O adiamento expira sozinho, sem nada precisar limpá-lo, e **registrar uma ocorrência o encerra** — ele existia para silenciar o ciclo que acabou de fechar e ficaria abafando o alerta do próximo.
 

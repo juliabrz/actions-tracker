@@ -38,11 +38,12 @@ export function describeInterval(intervalDays: number | null): string | null {
  */
 export function describeDue(f: Forecast): string {
   // Adiada mostra quando volta, não o prazo vencido: você já viu o prazo e
-  // pediu para não ver de novo agora.
+  // pediu para não ver de novo agora. "Volta em" e não "adiada até" porque a
+  // data é o dia do retorno, e "até" deixaria ambíguo se ela inclui esse dia.
   if (f.snoozed && f.snoozedUntil) {
-    return f.daysUntilActive === 0
-      ? "Adiada até hoje"
-      : `Adiada até ${formatDate(f.snoozedUntil)}`
+    return f.daysUntilActive === 1
+      ? "Volta amanhã"
+      : `Volta em ${formatDate(f.snoozedUntil)}`
   }
   if (f.daysRemaining == null || f.nextDate == null) {
     return f.lastDate ? "Sem estimativa ainda" : "Nunca foi registrada"

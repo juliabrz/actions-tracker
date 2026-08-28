@@ -308,9 +308,17 @@ describe("adiamento", () => {
     expect([emDia, adiada].sort(compareUrgency)[0]).toBe(adiada)
   })
 
-  it("expira sozinha no dia seguinte ao fim do adiamento", () => {
-    expect(vencida("2025-04-15", "2025-04-15").snoozed).toBe(true)
-    expect(vencida("2025-04-16", "2025-04-15").snoozed).toBe(false)
+  it("volta no proprio dia marcado, nao no seguinte", () => {
+    // "Adiar por 3 dias" em 2025-04-12 grava 2025-04-15: silencia 12, 13 e 14,
+    // e reaparece no dia 15.
+    expect(vencida("2025-04-14", "2025-04-15").snoozed).toBe(true)
+    expect(vencida("2025-04-15", "2025-04-15").snoozed).toBe(false)
+  })
+
+  it("adiar por N dias silencia exatamente N dias", () => {
+    const dias = ["2025-04-12", "2025-04-13", "2025-04-14"]
+    for (const d of dias) expect(vencida(d, "2025-04-15").snoozed).toBe(true)
+    expect(vencida("2025-04-15", "2025-04-15").snoozed).toBe(false)
   })
 
   it("adiamento no passado não silencia nada", () => {
