@@ -1,0 +1,13 @@
+import { config } from "dotenv"
+config({ path: ".env.local" })
+const { PGlite } = await import("@electric-sql/pglite")
+const { drizzle } = await import("drizzle-orm/pglite")
+const { eq } = await import("drizzle-orm")
+const schema = await import("../src/db/schema")
+const { shiftDays, today } = await import("../src/lib/dates")
+const db = drizzle(new PGlite(".pglite"), { schema })
+const a = await db.query.activities.findFirst({ where: eq(schema.activities.name, "Cortar o cabelo") })
+await db.update(schema.activities)
+  .set({ snoozedUntil: shiftDays(today(), 5) })
+  .where(eq(schema.activities.id, a!.id))
+console.log("adiada ate:", shiftDays(today(), 5))

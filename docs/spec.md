@@ -137,6 +137,16 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 - **Desfazer obrigatório:** snackbar por ~10 segundos após o registro. Botão de um toque garante registro acidental, e uma ocorrência falsa envenena a mediana.
 - Ações "em dia" **não** ficam escondidas atrás de um toque: ver que está tudo em dia é parte do motivo de abrir o app.
 
+### Adiar
+
+Uma atividade vencida que você não vai fazer agora pode ser adiada por 3 dias, 1 semana ou 1 mês, pelo relógio na própria linha. O botão só aparece em atividades vencidas ou chegando — nas demais não haveria o que adiar.
+
+**Adiar silencia, não remarca.** O intervalo, a próxima data e a confiança continuam saindo só das ocorrências: adiar um lembrete não é evidência sobre quando a atividade vence. O que muda é a apresentação — a linha sai do grupo urgente, ganha faixa neutra e passa a mostrar "adiada até 2 de set" no lugar do prazo. Entre as não-urgentes ela ordena pelo dia em que volta a importar.
+
+O adiamento expira sozinho, sem nada precisar limpá-lo, e **registrar uma ocorrência o encerra** — ele existia para silenciar o ciclo que acabou de fechar e ficaria abafando o alerta do próximo.
+
+> Isto revisa a decisão de deixar adiar fora do v1, cujo argumento era "um item vermelho na lista já é o lembrete". O furo aparece no uso: um item permanentemente vermelho que você não pode resolver treina você a ignorar vermelho — e aí a cor perde o significado para a lista inteira, não só para aquele item.
+
 ### `/activities/new`
 Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e, com ela, a âncora sem a qual não há o que projetar. Ao preencher a data aparece a marcação **"data aproximada"**, desligada por padrão: a data vem de um seletor de calendário, então tratá-la como exata é a leitura literal do que foi preenchido. Quem respondeu de cabeça marca a caixa e rebaixa a confiança de propósito.
 
@@ -229,7 +239,7 @@ Cada item aqui foi discutido e adiado de propósito.
 | Rodízio automático de vez | "Revezamos" foi resolvido com `feita_por` na ocorrência. Saber quem fez por último já elimina 90% do atrito; alternância automática traz casos chatos (mesma pessoa duas vezes seguidas, compartilhada sem ordem) |
 | Estoque e quantidade | Dobraria a complexidade do domínio para ganhar precisão num subconjunto dos casos. Data + intervalo resolve o resto |
 | Categorias / tags | Duas pessoas, dezenas de itens. Filtro por escopo basta |
-| Snooze | Um item vermelho na lista já é o lembrete |
+| ~~Snooze~~ | **Implementado.** Ver §5 — o argumento original não se sustentou no uso |
 | Edição de ocorrência | Apagar + recadastrar retroativo dá o mesmo resultado |
 | Relatório de gastos | O **campo** `valor` está no v1; a **tela** não. Uma coluna agora evita migração de dados históricos depois — registros antigos nunca teriam preço |
 | Mais de uma casa/grupo por pessoa | Ver seção 2 |

@@ -37,6 +37,13 @@ export function describeInterval(intervalDays: number | null): string | null {
  * Colour does the categorising; this sentence does the telling.
  */
 export function describeDue(f: Forecast): string {
+  // Adiada mostra quando volta, não o prazo vencido: você já viu o prazo e
+  // pediu para não ver de novo agora.
+  if (f.snoozed && f.snoozedUntil) {
+    return f.daysUntilActive === 0
+      ? "Adiada até hoje"
+      : `Adiada até ${formatDate(f.snoozedUntil)}`
+  }
   if (f.daysRemaining == null || f.nextDate == null) {
     return f.lastDate ? "Sem estimativa ainda" : "Nunca foi registrada"
   }

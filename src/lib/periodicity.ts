@@ -19,6 +19,8 @@ export type OccurrenceInput = {
 export type ActivitySettings = {
   guessedIntervalDays: number | null
   alertDaysBefore: number | null
+  /** Enquanto não passar, a atividade não disputa o topo da lista. */
+  snoozedUntil?: string | null
 }
 
 export type Forecast = {
@@ -33,6 +35,14 @@ export type Forecast = {
   daysRemaining: number | null
   alertThresholdDays: number | null
   status: Status
+  /**
+   * Adiada: silencia o tratamento de urgência sem mexer em nada do cálculo.
+   * `status` e `daysRemaining` continuam dizendo a verdade sobre o prazo.
+   */
+  snoozed: boolean
+  snoozedUntil: string | null
+  /** Dias até o adiamento acabar. Só ordena; não é previsão. */
+  daysUntilActive: number | null
   /**
    * Only with 2+ real intervals does an activity get alert colouring and climb
    * the urgency ordering. With a single interval the forecast shows, but grey
@@ -80,7 +90,7 @@ function levelFor(intervalCount: number): Confidence {
  */
 export function estimate(
   occurrences: OccurrenceInput[],
-  { guessedIntervalDays, alertDaysBefore }: ActivitySettings,
+  { guessedIntervalDays, alertDaysBefore, snoozedUntil = null }: ActivitySettings,
   todayStr: string = today(),
 ): Forecast {
   const history = [...occurrences].sort((a, b) => a.date.localeCompare(b.date))
@@ -134,6 +144,10 @@ export function estimate(
     else status = "on_track"
   }
 
+  // O adiamento expira sozinho: nada precisa limpá-lo para a atividade voltar.
+  const daysUntilActive = snoozedUntil ? daysBetween(todayStr, snoozedUntil) : null
+  const snoozed = daysUntilActive != null && daysUntilActive >= 0
+
   return {
     intervalDays,
     source,
@@ -144,6 +158,9 @@ export function estimate(
     daysRemaining,
     alertThresholdDays,
     status,
+    snoozed,
+    snoozedUntil: snoozed ? snoozedUntil : null,
+    daysUntilActive: snoozed ? daysUntilActive : null,
     highlight: intervals.length >= 2,
   }
 }
@@ -163,11 +180,17 @@ const STATUS_WEIGHT: Record<Status, number> = {
  * que a lista existe para fazer. A incerteza aparece na cor, não na posição.
  */
 export function compareUrgency(a: Forecast, b: Forecast): number {
-  const weightA = STATUS_WEIGHT[a.status]
-  const weightB = STATUS_WEIGHT[b.status]
-  if (weightA !== weightB) return weightA - weightB
+  // Adiada sai do grupo urgente e passa a ordenar pelo fim do adiamento: o
+  // prazo real continua vencido, mas não é o que você pediu para ver agora.
+  const weightOf = (f: Forecast) =>
+    f.snoozed ? STATUS_WEIGHT.on_track : STATUS_WEIGHT[f.status]
+  const daysOf = (f: Forecast) =>
+    f.snoozed
+      ? (f.daysUntilActive ?? 0)
+      : (f.daysRemaining ?? Number.POSITIVE_INFINITY)
 
-  const daysA = a.daysRemaining ?? Number.POSITIVE_INFINITY
-  const daysB = b.daysRemaining ?? Number.POSITIVE_INFINITY
-  return daysA - daysB
+  const weightA = weightOf(a)
+  const weightB = weightOf(b)
+  if (weightA !== weightB) return weightA - weightB
+  return daysOf(a) - daysOf(b)
 }

@@ -72,6 +72,7 @@ export async function listActivities(
       forecast: estimate(a.occurrences, {
         guessedIntervalDays: a.guessedIntervalDays,
         alertDaysBefore: a.alertDaysBefore,
+        snoozedUntil: a.snoozedUntil,
       }),
     }))
     .sort((a, b) => compareUrgency(a.forecast, b.forecast))
@@ -95,6 +96,7 @@ export async function getActivity(userId: string, activityId: string) {
     forecast: estimate(activity.occurrences, {
       guessedIntervalDays: activity.guessedIntervalDays,
       alertDaysBefore: activity.alertDaysBefore,
+      snoozedUntil: activity.snoozedUntil,
     }),
   }
 }

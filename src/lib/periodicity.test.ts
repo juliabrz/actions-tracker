@@ -11,6 +11,7 @@ import {
 const NO_SETTINGS: ActivitySettings = {
   guessedIntervalDays: null,
   alertDaysBefore: null,
+  snoozedUntil: null,
 }
 
 /** Builds occurrences from a start date, stepping through the given intervals. */
@@ -270,5 +271,57 @@ describe("urgency ordering", () => {
     const noForecast = estimate([], NO_SETTINGS, "2025-06-01")
     const onTrack = estimate(series("2025-01-01", [30, 30]), NO_SETTINGS, "2025-02-10")
     expect([noForecast, onTrack].sort(compareUrgency)[0]).toBe(onTrack)
+  })
+})
+
+describe("adiamento", () => {
+  // Ocorrências 01-01, 01-31, 03-02 → intervalo 30 → próxima 2025-04-01.
+  const vencida = (todayStr: string, snoozedUntil: string | null = null) =>
+    estimate(series("2025-01-01", [30, 30]), { ...NO_SETTINGS, snoozedUntil }, todayStr)
+
+  it("não altera o cálculo: intervalo, prazo e confiança seguem iguais", () => {
+    const semAdiar = vencida("2025-04-10")
+    const adiada = vencida("2025-04-10", "2025-04-15")
+
+    expect(adiada.intervalDays).toBe(semAdiar.intervalDays)
+    expect(adiada.nextDate).toBe(semAdiar.nextDate)
+    expect(adiada.daysRemaining).toBe(semAdiar.daysRemaining)
+    expect(adiada.confidence).toBe(semAdiar.confidence)
+    // O status continua dizendo a verdade sobre o prazo.
+    expect(adiada.status).toBe("overdue")
+    expect(adiada.snoozed).toBe(true)
+  })
+
+  it("sai do grupo urgente: perde para uma que está só chegando", () => {
+    const adiada = vencida("2025-04-10", "2025-04-15")
+    const chegando = estimate(series("2025-01-01", [30, 30]), NO_SETTINGS, "2025-03-29")
+    expect(adiada.status).toBe("overdue")
+    expect(chegando.status).toBe("due_soon")
+    expect([adiada, chegando].sort(compareUrgency)[0]).toBe(chegando)
+  })
+
+  it("entre as não-urgentes, ordena pelo momento em que volta a importar", () => {
+    // Volta em 5 dias; a outra só vence em 31. A adiada pede atenção antes.
+    const adiada = vencida("2025-04-10", "2025-04-15")
+    const emDia = estimate(series("2025-01-01", [30, 30]), NO_SETTINGS, "2025-03-01")
+    expect(emDia.daysRemaining).toBe(31)
+    expect([emDia, adiada].sort(compareUrgency)[0]).toBe(adiada)
+  })
+
+  it("expira sozinha no dia seguinte ao fim do adiamento", () => {
+    expect(vencida("2025-04-15", "2025-04-15").snoozed).toBe(true)
+    expect(vencida("2025-04-16", "2025-04-15").snoozed).toBe(false)
+  })
+
+  it("adiamento no passado não silencia nada", () => {
+    const f = vencida("2025-04-10", "2025-04-05")
+    expect(f.snoozed).toBe(false)
+    expect(f.snoozedUntil).toBeNull()
+  })
+
+  it("entre duas adiadas, volta primeiro a que termina antes", () => {
+    const curta = vencida("2025-04-10", "2025-04-12")
+    const longa = vencida("2025-04-10", "2025-04-30")
+    expect([longa, curta].sort(compareUrgency)[0]).toBe(curta)
   })
 })

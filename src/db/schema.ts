@@ -88,6 +88,12 @@ export const activities = pgTable(
     guessedIntervalDays: integer("guessed_interval_days"),
     /** Alert override. Without it, 15% of the estimated interval is used. */
     alertDaysBefore: integer("alert_days_before"),
+    /**
+     * Silences the urgency treatment until this date. Never touches the
+     * estimate: the interval comes from occurrences, and postponing a reminder
+     * is not evidence about when the activity is due.
+     */
+    snoozedUntil: date("snoozed_until", { mode: "string" }),
     archived: boolean("archived").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

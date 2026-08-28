@@ -8,7 +8,7 @@ import { db } from "@/db"
 import { activities, occurrences } from "@/db/schema"
 import { requireAccess } from "@/lib/activities"
 import { isUniqueViolation } from "@/lib/db-errors"
-import { isValidDate, today } from "@/lib/dates"
+import { isValidDate, shiftDays, today } from "@/lib/dates"
 import {
   MAX_NAME_LENGTH,
   sanitizeCost,
@@ -45,6 +45,13 @@ export async function recordOccurrence(input: {
         cost: sanitizeCost(input.cost),
       })
       .returning({ id: occurrences.id })
+
+    // Registrar encerra qualquer adiamento: ele existia para silenciar o ciclo
+    // que acabou de fechar, e ficaria abafando o alerta do próximo.
+    await db
+      .update(activities)
+      .set({ snoozedUntil: null })
+      .where(eq(activities.id, input.activityId))
 
     revalidatePath("/")
     revalidatePath(`/activities/${input.activityId}`)
@@ -210,6 +217,45 @@ export async function deleteActivity(activityId: string): Promise<Result> {
   await db.delete(activities).where(eq(activities.id, activityId))
 
   revalidatePath("/")
+  return { ok: true }
+}
+
+/**
+ * Silencia o tratamento de urgência por alguns dias. Não mexe no cálculo: o
+ * prazo continua vencido e a lista segue dizendo isso — o adiamento só decide
+ * se aquilo grita agora (spec §5).
+ */
+export async function snoozeActivity(
+  activityId: string,
+  days: number,
+): Promise<Result> {
+  const user = await requireUser()
+  await requireAccess(user.id, activityId)
+
+  const dias = sanitizeDays(days)
+  if (!dias) return { ok: false, error: "Prazo de adiamento inválido." }
+
+  await db
+    .update(activities)
+    .set({ snoozedUntil: shiftDays(today(), dias) })
+    .where(eq(activities.id, activityId))
+
+  revalidatePath("/")
+  revalidatePath(`/activities/${activityId}`)
+  return { ok: true }
+}
+
+export async function clearSnooze(activityId: string): Promise<Result> {
+  const user = await requireUser()
+  await requireAccess(user.id, activityId)
+
+  await db
+    .update(activities)
+    .set({ snoozedUntil: null })
+    .where(eq(activities.id, activityId))
+
+  revalidatePath("/")
+  revalidatePath(`/activities/${activityId}`)
   return { ok: true }
 }
 

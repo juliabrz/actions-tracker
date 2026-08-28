@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { DoneButton } from "@/components/done-button"
+import { SnoozeButton } from "@/components/snooze-button"
 import type { ActivityWithForecast } from "@/lib/activities"
 import { describeConfidence, describeDue, describeInterval } from "@/lib/format"
 import type { Status } from "@/lib/periodicity"
@@ -33,7 +34,16 @@ const TONE: Record<Status, { strong: Tone; soft: Tone }> = {
 
 export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
   const { forecast } = activity
-  const tone = TONE[forecast.status][forecast.highlight ? "strong" : "soft"]
+  // Adiada usa o tom neutro: ela está pausada, não em dia nem urgente.
+  const tone = forecast.snoozed
+    ? TONE.no_forecast.strong
+    : TONE[forecast.status][forecast.highlight ? "strong" : "soft"]
+
+  // Só faz sentido adiar o que está pedindo atenção.
+  const podeAdiar =
+    forecast.snoozed ||
+    forecast.status === "overdue" ||
+    forecast.status === "due_soon"
 
   return (
     <li className="pop-panel flex items-stretch overflow-hidden p-0 transition-transform hover:-translate-x-px hover:-translate-y-px">
@@ -71,7 +81,14 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
         </div>
       </Link>
 
-      <div className="flex items-center pr-2">
+      <div className="flex items-center gap-1 pr-2">
+        {podeAdiar && (
+          <SnoozeButton
+            activityId={activity.id}
+            name={activity.name}
+            snoozed={forecast.snoozed}
+          />
+        )}
         <DoneButton
           activityId={activity.id}
           name={activity.name}
