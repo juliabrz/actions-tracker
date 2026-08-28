@@ -23,32 +23,32 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Avatar className="size-7 border-2 border-ink" title={name ?? undefined}>
-              <AvatarImage src={image ?? undefined} alt={name ?? ""} />
-              <AvatarFallback className="bg-cream text-xs font-semibold text-ink">
-                {name?.[0]?.toUpperCase() ?? "?"}
-              </AvatarFallback>
-            </Avatar>
-            <form
-              className="flex"
-              action={async () => {
-                "use server"
-                await signOut({ redirectTo: "/login" })
-              }}
+          {/* Avatar e "sair" viram um controle só: solto na barra, o avatar não
+              pertencia a nada e lia-se como enfeite perdido. Junto do rótulo,
+              ele diz de quem é a sessão que o botão encerra. */}
+          <form
+            className="flex"
+            action={async () => {
+              "use server"
+              await signOut({ redirectTo: "/login" })
+            }}
+          >
+            <Button
+              type="submit"
+              variant="ghost"
+              size="sm"
+              aria-label={`Sair da conta de ${name ?? "usuária"}`}
+              className="pop-panel h-auto gap-2 py-1 pr-3 pl-1 font-heading text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum"
             >
-              {/* Pastilha, como todo o resto que clica: texto solto no meio da
-                  barra não se lia como botão. */}
-              <Button
-                type="submit"
-                variant="ghost"
-                size="sm"
-                className="pop-panel h-auto px-2.5 py-1 font-heading text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum"
-              >
-                sair
-              </Button>
-            </form>
-          </div>
+              <Avatar className="size-6 border-2 border-ink">
+                <AvatarImage src={image ?? undefined} alt="" />
+                <AvatarFallback className="bg-cream text-[10px] font-semibold text-ink">
+                  {name?.[0]?.toUpperCase() ?? "?"}
+                </AvatarFallback>
+              </Avatar>
+              sair
+            </Button>
+          </form>
         </div>
       </header>
 
