@@ -20,6 +20,25 @@ if (!url.startsWith("pglite://")) {
   process.exit(1)
 }
 
+// PGlite e de processo unico: abrir o mesmo diretorio com o dev server no ar
+// corrompe o banco. Aconteceu tres vezes durante o desenvolvimento.
+async function servidorNoAr() {
+  try {
+    await fetch("http://localhost:3000/", { signal: AbortSignal.timeout(700) })
+    return true
+  } catch {
+    return false
+  }
+}
+
+if (await servidorNoAr()) {
+  console.error(
+    "Ha um servidor rodando em localhost:3000.\n" +
+      "PGlite nao aceita dois processos no mesmo banco — pare o dev server antes.",
+  )
+  process.exit(1)
+}
+
 const { PGlite } = await import("@electric-sql/pglite")
 const { drizzle } = await import("drizzle-orm/pglite")
 const { migrate } = await import("drizzle-orm/pglite/migrator")
