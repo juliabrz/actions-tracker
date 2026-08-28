@@ -6,6 +6,7 @@ import { toast } from "sonner"
 
 import { createActivity, updateActivity } from "@/app/(app)/activities/actions"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -50,6 +51,10 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   const [name, setName] = useState(activity?.name ?? "")
   const [scope, setScope] = useState<Scope>(activity?.scope ?? "personal")
   const [lastDoneOn, setLastDoneOn] = useState("")
+  // Padrão marcado: quem responde "quando foi a última vez?" quase sempre está
+  // lembrando de cabeça. Prometer menos precisão do que se tem é seguro; o
+  // contrário envenena a confiança da estimativa.
+  const [lastDoneApproximate, setLastDoneApproximate] = useState(true)
   const [guess, setGuess] = useState(activity?.guessedIntervalDays?.toString() ?? "")
   const [alert, setAlert] = useState(activity?.alertDaysBefore?.toString() ?? "")
 
@@ -71,7 +76,11 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
 
       const result = activity
         ? await updateActivity({ activityId: activity.id, ...shared })
-        : await createActivity({ ...shared, lastDoneOn: lastDoneOn || null })
+        : await createActivity({
+            ...shared,
+            lastDoneOn: lastDoneOn || null,
+            lastDoneApproximate,
+          })
 
       if (!result.ok) {
         toast.error(result.error)
@@ -121,10 +130,25 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
             value={lastDoneOn}
             onChange={(e) => setLastDoneOn(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">
-            Opcional, mas sem isso não há de onde contar. Fica marcada como data
-            aproximada.
-          </p>
+          {lastDoneOn ? (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="lastDoneApproximate"
+                checked={lastDoneApproximate}
+                onCheckedChange={(v) => setLastDoneApproximate(v === true)}
+              />
+              <Label
+                htmlFor="lastDoneApproximate"
+                className="text-sm font-normal text-muted-foreground"
+              >
+                Data aproximada (lembrei de cabeça)
+              </Label>
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Opcional, mas sem isso não há de onde contar.
+            </p>
+          )}
         </div>
       )}
 

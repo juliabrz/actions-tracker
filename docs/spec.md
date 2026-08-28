@@ -132,10 +132,12 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 - **Desfazer obrigatório:** snackbar por ~10 segundos após o registro. Botão de um toque garante registro acidental, e uma ocorrência falsa envenena a mediana.
 - Ações "em dia" **não** ficam escondidas atrás de um toque: ver que está tudo em dia é parte do motivo de abrir o app.
 
-### `/acoes/nova`
-Nome, escopo, e dois campos opcionais: "quando foi a última vez?" (cria a primeira ocorrência) e "de quanto em quanto tempo você acha que faz?" (o chute). Detalhes avançados — override do alerta, valor — atrás de um "mais opções".
+### `/activities/new`
+Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e, com ela, a âncora sem a qual não há o que projetar. Ao preencher a data aparece a marcação **"data aproximada"**, ligada por padrão: quem responde essa pergunta quase sempre lembra de cabeça, e prometer menos precisão do que se tem é seguro, enquanto o contrário envenena a confiança da estimativa.
 
-### `/acoes/[id]` — Detalhe
+Atrás de "mais opções": o palpite de ciclo e o override do aviso. Ao digitar o palpite, o campo de aviso mostra ao vivo quantos dias aquele ciclo produziria, com um link para fixar. **Sugere em vez de preencher**: um número escrito no campo vira override e congela, enquanto o automático acompanha a mediana conforme os ciclos reais substituem o palpite.
+
+### `/activities/[id]` — Detalhe
 Histórico de ocorrências, cadastro retroativo (data exata + checkbox "data aproximada"), apagar ocorrência, editar a ação, arquivar.
 
 ## 6. Modelo de dados

@@ -84,6 +84,7 @@ export async function createActivity(input: {
   guessedIntervalDays?: number | null
   alertDaysBefore?: number | null
   lastDoneOn?: string | null
+  lastDoneApproximate?: boolean
 }): Promise<Result<{ activityId: string }>> {
   const user = await requireUser()
 
@@ -115,7 +116,7 @@ export async function createActivity(input: {
       activityId: created.id,
       date: input.lastDoneOn,
       doneById: user.id,
-      approximate: true,
+      approximate: input.lastDoneApproximate ?? true,
     })
   }
 
