@@ -205,12 +205,19 @@
   }
 }
 
-/** Fundo quadriculado da referência, bem discreto para não competir com o conteúdo. */
 @utility grid-paper {
+  /* Enfeite em camadas de background, não em elementos: nada fica na frente do
+     conteúdo por acidente, não há disputa de z-index e nenhum adesivo
+     intercepta clique. Opacidade baixa — é papel de parede, não ilustração. */
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--color-grape) 22%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--color-grape) 22%, transparent) 1px, transparent 1px);
-  background-size: 22px 22px;
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%201.5c.5%205.2%205.3%2010%2010.5%2010.5-5.2.5-10%205.3-10.5%2010.5-.5-5.2-5.3-10-10.5-10.5C6.7%2011.5%2011.5%206.7%2012%201.5Z%22%20fill%3D%22%23fbcf87%22%20opacity%3D%22.55%22%2F%3E%3C%2Fsvg%3E"),\n    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%2021S3%2014.6%203%208.9A5%205%200%200%201%2012%206a5%205%200%200%201%209%202.9C21%2014.6%2012%2021%2012%2021Z%22%20fill%3D%22%23f79ac0%22%20opacity%3D%22.45%22%2F%3E%3C%2Fsvg%3E"),\n    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20opacity%3D%22.4%22%3E%3Cellipse%20cx%3D%2212%22%20cy%3D%226.6%22%20rx%3D%223.4%22%20ry%3D%224.8%22%20fill%3D%22%23a6a2e6%22%20transform%3D%22rotate%280%2012%2012%29%22%2F%3E%3Cellipse%20cx%3D%2212%22%20cy%3D%226.6%22%20rx%3D%223.4%22%20ry%3D%224.8%22%20fill%3D%22%23a6a2e6%22%20transform%3D%22rotate%2872%2012%2012%29%22%2F%3E%3Cellipse%20cx%3D%2212%22%20cy%3D%226.6%22%20rx%3D%223.4%22%20ry%3D%224.8%22%20fill%3D%22%23a6a2e6%22%20transform%3D%22rotate%28144%2012%2012%29%22%2F%3E%3Cellipse%20cx%3D%2212%22%20cy%3D%226.6%22%20rx%3D%223.4%22%20ry%3D%224.8%22%20fill%3D%22%23a6a2e6%22%20transform%3D%22rotate%28216%2012%2012%29%22%2F%3E%3Cellipse%20cx%3D%2212%22%20cy%3D%226.6%22%20rx%3D%223.4%22%20ry%3D%224.8%22%20fill%3D%22%23a6a2e6%22%20transform%3D%22rotate%28288%2012%2012%29%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%222.6%22%20fill%3D%22%23fbcf87%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"),\n    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%201.5c.5%205.2%205.3%2010%2010.5%2010.5-5.2.5-10%205.3-10.5%2010.5-.5-5.2-5.3-10-10.5-10.5C6.7%2011.5%2011.5%206.7%2012%201.5Z%22%20fill%3D%22%238ed7d8%22%20opacity%3D%22.55%22%2F%3E%3C%2Fsvg%3E"),\n    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%201.5c.5%205.2%205.3%2010%2010.5%2010.5-5.2.5-10%205.3-10.5%2010.5-.5-5.2-5.3-10-10.5-10.5C6.7%2011.5%2011.5%206.7%2012%201.5Z%22%20fill%3D%22%23f79ac0%22%20opacity%3D%22.45%22%2F%3E%3C%2Fsvg%3E"),\n    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%2021S3%2014.6%203%208.9A5%205%200%200%201%2012%206a5%205%200%200%201%209%202.9C21%2014.6%2012%2021%2012%2021Z%22%20fill%3D%22%23a6a2e6%22%20opacity%3D%22.4%22%2F%3E%3C%2Fsvg%3E"),\n    radial-gradient(circle at 10% 4%, color-mix(in oklab, var(--color-candy) 26%, transparent), transparent 42%),\n    radial-gradient(circle at 92% 96%, color-mix(in oklab, var(--color-mint) 22%, transparent), transparent 44%),\n    linear-gradient(to right, color-mix(in oklab, var(--color-grape) 18%, transparent) 1px, transparent 1px),\n    linear-gradient(to bottom, color-mix(in oklab, var(--color-grape) 18%, transparent) 1px, transparent 1px);
+  background-position:
+    7% 14%,\n    93% 26%,\n    4% 62%,\n    96% 72%,\n    12% 92%,\n    88% 6%,\n    0 0,\n    0 0,\n    0 0,\n    0 0;
+  background-size:
+    74px,\n    58px,\n    66px,\n    46px,\n    38px,\n    34px,\n    100% 100%,\n    100% 100%,\n    24px 24px,\n    24px 24px;
+  background-repeat:
+    no-repeat,\n    no-repeat,\n    no-repeat,\n    no-repeat,\n    no-repeat,\n    no-repeat,\n    no-repeat,\n    no-repeat,\n    repeat,\n    repeat;
+  background-attachment: fixed, fixed, fixed, fixed, fixed, fixed, fixed, fixed, scroll, scroll;
 }
 
 /** O toast do "Desfazer" é o elemento mais visto do app depois da lista. */
