@@ -1,6 +1,6 @@
 "use client"
 
-import { Check } from "lucide-react"
+import { Check, X } from "lucide-react"
 import { useState, useTransition } from "react"
 import { toast } from "sonner"
 
@@ -65,10 +65,23 @@ export function DoneButton({
           // Empilhado, não em linha: nome de atividade é livre e longo, e numa
           // linha só com os botões ao lado ele era truncado.
           <div className="pop-panel w-[min(24rem,92vw)] space-y-2 p-3">
-            <p className="text-sm leading-snug">
-              <strong className="font-semibold">{name}</strong>
-              <span className="text-muted-foreground"> — registrado hoje</span>
-            </p>
+            <div className="flex items-start gap-2">
+              <p className="min-w-0 flex-1 text-sm leading-snug">
+                <strong className="font-semibold">{name}</strong>
+                <span className="text-muted-foreground"> — registrado hoje</span>
+              </p>
+              {/* Fechar: se o registro saiu certo, não há motivo para esperar os
+                  10 segundos da janela de desfazer olhando para o aviso. */}
+              <button
+                type="button"
+                onClick={() => toast.dismiss(id)}
+                title="Fechar"
+                aria-label="Fechar aviso"
+                className="-mt-0.5 shrink-0 rounded-md border-2 border-border bg-cream p-0.5 text-ink hover:bg-bubblegum"
+              >
+                <X className="size-3.5" strokeWidth={3} aria-hidden />
+              </button>
+            </div>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
