@@ -12,14 +12,18 @@ import { Label } from "@/components/ui/label"
 import { today } from "@/lib/dates"
 
 /**
- * Backfilling old entries. Exact date plus an "approximate" flag: storing the
- * date as fact and the uncertainty as a flag delivers nearly everything a
- * declared-precision model would, at a fraction of the cost (spec §3).
+ * O único jeito de registrar a partir da tela de detalhe. O botão de um toque
+ * vive na lista, que é o caminho quente; aqui você já entrou de propósito, e um
+ * formulário que também aceita valor e data passada cobre mais por menos.
+ *
+ * Data exata mais a marcação de "aproximada": guardar a data como fato e a
+ * incerteza como flag entrega quase tudo que precisão declarada entregaria,
+ * por uma fração do custo (spec §3).
  */
 export function BackfillForm({ activityId }: { activityId: string }) {
   const router = useRouter()
   const [pending, start] = useTransition()
-  const [date, setDate] = useState("")
+  const [date, setDate] = useState(today())
   const [approximate, setApproximate] = useState(false)
   const [cost, setCost] = useState("")
 
@@ -37,7 +41,7 @@ export function BackfillForm({ activityId }: { activityId: string }) {
         return
       }
       toast.success("Registro adicionado.")
-      setDate("")
+      setDate(today())
       setCost("")
       router.refresh()
     })
@@ -45,7 +49,7 @@ export function BackfillForm({ activityId }: { activityId: string }) {
 
   return (
     <form onSubmit={submit} className="pop-panel space-y-3 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Adicionar registro antigo</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Adicionar registro</p>
 
       <div className="flex gap-2">
         <Input
