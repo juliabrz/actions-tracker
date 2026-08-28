@@ -17,7 +17,7 @@ export function WindowPanel({
   return (
     <section className="pop-panel overflow-hidden p-0">
       <div className="flex items-center justify-between gap-2 border-b-2 border-border bg-candy px-4 py-2">
-        <h1 className="font-display text-base text-ink">{title}</h1>
+        <h1 className="font-heading text-sm text-ink">{title}</h1>
         {sticker}
       </div>
       <div className="p-4">{children}</div>
