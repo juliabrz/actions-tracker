@@ -152,6 +152,21 @@ export async function updateActivity(input: {
   return { ok: true }
 }
 
+/**
+ * Permanent removal, occurrences included — the FK cascades. Distinct from
+ * archiving on purpose: archiving is for "I stopped doing this", deleting is
+ * for "this should never have existed". Only the latter destroys history.
+ */
+export async function deleteActivity(activityId: string): Promise<Result> {
+  const user = await requireUser()
+  await requireAccess(user.id, activityId)
+
+  await db.delete(activities).where(eq(activities.id, activityId))
+
+  revalidatePath("/")
+  return { ok: true }
+}
+
 export async function setArchived(
   activityId: string,
   archived: boolean,

@@ -138,7 +138,9 @@ Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e
 Atrás de "mais opções": o palpite de ciclo e o override do aviso. Ao digitar o palpite, o campo de aviso mostra ao vivo quantos dias aquele ciclo produziria, com um link para fixar. **Sugere em vez de preencher**: um número escrito no campo vira override e congela, enquanto o automático acompanha a mediana conforme os ciclos reais substituem o palpite.
 
 ### `/activities/[id]` — Detalhe
-Histórico de ocorrências, cadastro retroativo (data exata + checkbox "data aproximada"), apagar ocorrência, editar a ação, arquivar.
+Histórico de ocorrências, cadastro retroativo (data exata + checkbox "data aproximada"), apagar ocorrência, editar a ação, arquivar e excluir.
+
+**Arquivar e excluir não são a mesma coisa**, e a interface precisa deixar isso claro. Arquivar é para "parei de fazer isso": some da lista, guarda o histórico. Excluir é para "isso não devia existir": apaga a ação e todas as ocorrências junto, por cascade, sem desfazer. A confirmação de exclusão diz quantos registros serão perdidos e sugere arquivar no lugar.
 
 ## 6. Modelo de dados
 

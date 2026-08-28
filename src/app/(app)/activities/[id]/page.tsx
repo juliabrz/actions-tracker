@@ -5,6 +5,7 @@ import { auth } from "@/auth"
 import { BackfillForm } from "@/components/backfill-form"
 import {
   ArchiveButton,
+  DeleteActivityButton,
   DeleteOccurrenceButton,
 } from "@/components/destructive-buttons"
 import { DoneButton } from "@/components/done-button"
@@ -103,11 +104,17 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
         )}
       </section>
 
-      <footer className="flex gap-2 border-t pt-4">
+      <footer className="flex items-center gap-2 border-t pt-4">
         <Button asChild variant="ghost" size="sm">
           <Link href={`/activities/${activity.id}/edit`}>Editar</Link>
         </Button>
         <ArchiveButton activityId={activity.id} archived={activity.archived} />
+        {/* Separado do resto: é a única ação do app que destrói histórico. */}
+        <DeleteActivityButton
+          activityId={activity.id}
+          name={activity.name}
+          occurrenceCount={activity.occurrences.length}
+        />
       </footer>
     </div>
   )

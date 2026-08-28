@@ -1,10 +1,15 @@
 "use client"
 
+import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { toast } from "sonner"
 
-import { deleteOccurrence, setArchived } from "@/app/(app)/activities/actions"
+import {
+  deleteActivity,
+  deleteOccurrence,
+  setArchived,
+} from "@/app/(app)/activities/actions"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,7 +41,9 @@ export function DeleteOccurrenceButton({
           size="sm"
           disabled={pending}
           className="text-muted-foreground hover:text-destructive"
+          aria-label={`Apagar o registro de ${dateLabel}`}
         >
+          <Trash2 className="size-4" aria-hidden />
           Apagar
         </Button>
       </AlertDialogTrigger>
@@ -99,5 +106,69 @@ export function ArchiveButton({
     >
       {archived ? "Reativar" : "Arquivar"}
     </Button>
+  )
+}
+
+/**
+ * Deleting an activity is the only action in the app that destroys history, so
+ * the dialog says exactly how much is about to be lost.
+ */
+export function DeleteActivityButton({
+  activityId,
+  name,
+  occurrenceCount,
+}: {
+  activityId: string
+  name: string
+  occurrenceCount: number
+}) {
+  const router = useRouter()
+  const [pending, start] = useTransition()
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={pending}
+          className="text-muted-foreground hover:text-destructive"
+        >
+          <Trash2 className="size-4" aria-hidden />
+          Excluir
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Excluir &ldquo;{name}&rdquo;?</AlertDialogTitle>
+          <AlertDialogDescription>
+            {occurrenceCount === 0
+              ? "A ação será removida. Não há histórico a perder."
+              : `Os ${occurrenceCount} registros do histórico serão apagados junto, e a periodicidade medida se perde. Isso não tem desfazer.`}
+            {" "}
+            Se você só parou de fazer isso, prefira arquivar — some da lista e
+            guarda o histórico.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() =>
+              start(async () => {
+                const result = await deleteActivity(activityId)
+                if (!result.ok) {
+                  toast.error(result.error)
+                  return
+                }
+                toast.success(`"${name}" foi excluída.`)
+                router.push("/")
+              })
+            }
+          >
+            Excluir para sempre
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
