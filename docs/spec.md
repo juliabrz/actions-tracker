@@ -1,4 +1,4 @@
-# Actions Tracker — Especificação v1
+# Activity Tracker — Especificação v1
 
 > Status: aprovada · Última revisão: 2026-08-27
 > Este documento é a fonte da verdade do escopo. Código que discordar dele está errado — ou o documento precisa ser atualizado antes.

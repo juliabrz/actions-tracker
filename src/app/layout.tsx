@@ -9,7 +9,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Actions Tracker",
+  title: "Activity Tracker",
   description: "Acompanhe de quanto em quanto tempo você faz cada coisa.",
 }
 

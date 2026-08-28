@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <main className="flex flex-1 items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-6 text-center">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">Actions Tracker</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Activity Tracker</h1>
           <p className="text-sm text-muted-foreground">
             De quanto em quanto tempo você faz cada coisa.
           </p>

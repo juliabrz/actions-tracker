@@ -13,7 +13,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur">
-        <span className="font-semibold tracking-tight">Actions Tracker</span>
+        <span className="font-semibold tracking-tight">Activity Tracker</span>
         <div className="flex items-center gap-2">
           <Avatar className="size-7">
             <AvatarImage src={image ?? undefined} alt={name ?? ""} />
