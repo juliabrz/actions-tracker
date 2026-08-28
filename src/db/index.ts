@@ -28,8 +28,14 @@ const isPglite = process.env.DATABASE_URL.startsWith("pglite://")
  * once. Each PGlite instance keeps its own in-memory image of the database, so
  * a second instance would silently read stale data — a write from a route
  * handler would be invisible to the next page render.
+ *
+ * The cache holds the *promise*, not the resolved value. Caching the value left
+ * a race: two evaluations running at once both saw an empty cache and both
+ * built an instance over the same directory, and the loser aborted its WASM
+ * runtime ("RuntimeError: Aborted()"). Storing the in-flight promise makes
+ * concurrent callers share one instance.
  */
-const globalForDb = globalThis as unknown as { __db?: Db }
+const globalForDb = globalThis as unknown as { __dbPromise?: Promise<Db> }
 
 async function createPglite(): Promise<Db> {
   // Guards a *running* production server, not `next build`. The build runs with
@@ -49,5 +55,6 @@ function createNeon(): Db {
   return drizzleNeon(neon(process.env.DATABASE_URL!), { schema }) as unknown as Db
 }
 
-export const db: Db =
-  globalForDb.__db ?? (globalForDb.__db = isPglite ? await createPglite() : createNeon())
+export const db: Db = await (globalForDb.__dbPromise ??= isPglite
+  ? createPglite()
+  : Promise.resolve(createNeon()))
