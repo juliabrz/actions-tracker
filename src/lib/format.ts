@@ -29,15 +29,21 @@ export function describeInterval(intervalDays: number | null): string | null {
   return `a cada ${days(intervalDays)}`
 }
 
-/** The headline of each row: how long is left, in plain language. */
+/**
+ * The headline of each row: how long is left, in plain language.
+ *
+ * Carries the status on its own — the row shows no separate status label, since
+ * "Atrasada · atrasada há 5 dias" and "Chegando · é hoje" both read as stutter.
+ * Colour does the categorising; this sentence does the telling.
+ */
 export function describeDue(f: Forecast): string {
   if (f.daysRemaining == null || f.nextDate == null) {
-    return f.lastDate ? "sem estimativa ainda" : "nunca foi registrada"
+    return f.lastDate ? "Sem estimativa ainda" : "Nunca foi registrada"
   }
-  if (f.daysRemaining < 0) return `atrasada há ${days(-f.daysRemaining)}`
-  if (f.daysRemaining === 0) return "é hoje"
-  if (f.daysRemaining === 1) return "é amanhã"
-  return `em ${days(f.daysRemaining)} · ${formatDate(f.nextDate)}`
+  if (f.daysRemaining < 0) return `Atrasada há ${days(-f.daysRemaining)}`
+  if (f.daysRemaining === 0) return "É hoje"
+  if (f.daysRemaining === 1) return "É amanhã"
+  return `Em ${days(f.daysRemaining)} · ${formatDate(f.nextDate)}`
 }
 
 const CONFIDENCE_LABEL: Record<Confidence, string> = {

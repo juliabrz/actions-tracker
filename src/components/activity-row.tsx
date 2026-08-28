@@ -36,12 +36,6 @@ const TONE: Record<Status, { strong: Tone; soft: Tone }> = {
   },
 }
 
-const STATUS_LABEL: Record<Status, string> = {
-  overdue: "Atrasada",
-  due_soon: "Chegando",
-  on_track: "Em dia",
-  no_forecast: "Sem previsão",
-}
 
 export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
   const { forecast } = activity
@@ -60,12 +54,9 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
           )}
         </div>
 
-        <div className={`text-sm ${tone.text}`}>
-          {forecast.status !== "no_forecast" && (
-            <span className={forecast.highlight ? "font-medium" : undefined}>
-              {STATUS_LABEL[forecast.status]} ·{" "}
-            </span>
-          )}
+        <div
+          className={`text-sm ${tone.text} ${forecast.highlight ? "font-medium" : ""}`}
+        >
           {describeDue(forecast)}
         </div>
 
