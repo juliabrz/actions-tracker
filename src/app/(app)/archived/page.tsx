@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { auth } from "@/auth"
+import { BackLink } from "@/components/back-link"
 import { Star } from "@/components/stickers"
 import { WindowPanel } from "@/components/window-panel"
 import { listActivities } from "@/lib/activities"
@@ -11,9 +12,7 @@ export default async function ArchivedPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-4 p-4">
-      <Link href="/" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline">
-        ← todas as atividades
-      </Link>
+      <BackLink />
       
       <WindowPanel title="Arquivadas" sticker={<Star className="size-5 text-lilac" />}>
         {activities.length === 0 ? (

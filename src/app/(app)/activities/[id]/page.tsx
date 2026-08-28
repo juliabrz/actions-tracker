@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { auth } from "@/auth"
+import { BackLink } from "@/components/back-link"
 import { BackfillForm } from "@/components/backfill-form"
 import {
   ArchiveButton,
@@ -30,14 +31,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 p-4">
-      <div>
-        <Link
-          href="/"
-          className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline"
-        >
-          ← todas as atividades
-        </Link>
-      </div>
+      <BackLink />
 
       <header className="space-y-2">
         <div className="flex items-start justify-between gap-3">
