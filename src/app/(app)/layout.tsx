@@ -1,3 +1,4 @@
+import { X } from "lucide-react"
 import { redirect } from "next/navigation"
 
 import { auth, signOut } from "@/auth"
@@ -23,32 +24,41 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             </span>
           </div>
 
-          {/* Avatar e "sair" viram um controle só: solto na barra, o avatar não
-              pertencia a nada e lia-se como enfeite perdido. Junto do rótulo,
-              ele diz de quem é a sessão que o botão encerra. */}
-          <form
-            className="flex"
-            action={async () => {
-              "use server"
-              await signOut({ redirectTo: "/login" })
-            }}
-          >
-            <Button
-              type="submit"
-              variant="ghost"
-              size="sm"
-              aria-label={`Sair da conta de ${name ?? "usuária"}`}
-              className="pop-panel h-auto gap-2 py-1 pr-3 pl-1 font-heading text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum"
+          {/* Controles de janela, como o ✕ da referência. A pastilha branca de
+              antes usava o tratamento dos cards de conteúdo, então parecia um
+              card do corpo da página caído em cima da barra. Aqui os dois
+              elementos têm a mesma altura e o mesmo contorno: leem-se como um
+              conjunto, não como uma bolinha solta ao lado de um link. */}
+          <div className="flex items-center gap-1.5">
+            <Avatar
+              className="size-7 border-2 border-ink bg-cream"
+              title={name ?? undefined}
             >
-              <Avatar className="size-6 border-2 border-ink">
-                <AvatarImage src={image ?? undefined} alt="" />
-                <AvatarFallback className="bg-cream text-[10px] font-semibold text-ink">
-                  {name?.[0]?.toUpperCase() ?? "?"}
-                </AvatarFallback>
-              </Avatar>
-              sair
-            </Button>
-          </form>
+              <AvatarImage src={image ?? undefined} alt="" />
+              <AvatarFallback className="bg-cream font-heading text-[10px] text-ink">
+                {name?.[0]?.toUpperCase() ?? "?"}
+              </AvatarFallback>
+            </Avatar>
+
+            <form
+              className="flex"
+              action={async () => {
+                "use server"
+                await signOut({ redirectTo: "/login" })
+              }}
+            >
+              <Button
+                type="submit"
+                variant="ghost"
+                size="icon"
+                title="Sair"
+                aria-label={`Sair da conta de ${name ?? "usuária"}`}
+                className="size-7 rounded-md border-2 border-ink bg-seafoam text-ink transition-transform hover:-translate-y-px hover:bg-mint"
+              >
+                <X className="size-4" strokeWidth={3} aria-hidden />
+              </Button>
+            </form>
+          </div>
         </div>
       </header>
 
