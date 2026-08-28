@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { auth } from "@/auth"
-import { BackLink } from "@/components/back-link"
+import { BackLink } from "@/components/pill-link"
 import { Star } from "@/components/stickers"
 import { WindowPanel } from "@/components/window-panel"
 import { listActivities } from "@/lib/activities"

@@ -2,7 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { auth } from "@/auth"
-import { BackLink } from "@/components/back-link"
+import { BackLink } from "@/components/pill-link"
 import { BackfillForm } from "@/components/backfill-form"
 import {
   ArchiveButton,

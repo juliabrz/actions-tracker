@@ -3,6 +3,7 @@ import Link from "next/link"
 
 import { auth } from "@/auth"
 import { ActivityRow } from "@/components/activity-row"
+import { PillLink } from "@/components/pill-link"
 import { Smiley, Sparkles, Star } from "@/components/stickers"
 import { Button } from "@/components/ui/button"
 import { listActivities, type Filter } from "@/lib/activities"
@@ -59,14 +60,9 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
         </ul>
       )}
 
-      <div className="flex items-center gap-2 px-4 py-8">
+      <div className="flex items-center gap-3 px-4 py-8">
+        <PillLink href="/archived">ver arquivadas</PillLink>
         <Sparkles />
-        <Link
-          href="/archived"
-          className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline"
-        >
-          ver arquivadas
-        </Link>
       </div>
 
       {/* Ação flutuante: nunca disputa largura com nada e fica no alcance do
