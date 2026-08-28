@@ -138,7 +138,7 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 ### `/activities/new`
 Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e, com ela, a âncora sem a qual não há o que projetar. Ao preencher a data aparece a marcação **"data aproximada"**, desligada por padrão: a data vem de um seletor de calendário, então tratá-la como exata é a leitura literal do que foi preenchido. Quem respondeu de cabeça marca a caixa e rebaixa a confiança de propósito.
 
-Atrás de "mais opções": o palpite de ciclo e o override do aviso. Ao digitar o palpite, o campo de aviso mostra ao vivo quantos dias aquele ciclo produziria, com um link para fixar. **Sugere em vez de preencher**: um número escrito no campo vira override e congela, enquanto o automático acompanha a mediana conforme os ciclos reais substituem o palpite.
+Atrás de "mais opções": o palpite de ciclo e o override do aviso. Ao digitar o palpite, o texto de ajuda mostra ao vivo quantos dias aquele ciclo produziria — como informação, não como atalho. Houve um botão para adotar esse número; foi removido porque fixar exatamente o valor que o automático já produz não muda nada hoje e impede o ajuste amanhã, quando o ciclo mudar. Override existe para escolher um número **diferente** do calculado, e para isso basta digitar.
 
 ### `/activities/[id]` — Detalhe
 Histórico de ocorrências, formulário de registro (data já em hoje, mais valor e o checkbox "data aproximada"), apagar ocorrência, editar a atividade, arquivar e excluir.

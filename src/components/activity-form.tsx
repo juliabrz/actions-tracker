@@ -61,9 +61,12 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   const [guess, setGuess] = useState(activity?.guessedIntervalDays?.toString() ?? "")
   const [alert, setAlert] = useState(activity?.alertDaysBefore?.toString() ?? "")
 
-  // Sugestão viva: o palpite que você está digitando manda, e na falta dele
-  // vale o intervalo já medido. Só sugere — preencher o campo gravaria um
-  // override, que congela o valor enquanto o automático acompanha o ciclo.
+  // Mostra o que o automático daria para este ciclo: o palpite que você está
+  // digitando manda, e na falta dele vale o intervalo já medido. É informação,
+  // não atalho — havia um botão para adotar esse número, removido porque fixar
+  // exatamente o valor que o automático produz não muda nada hoje e impede o
+  // ajuste amanhã, quando o ciclo mudar. Override serve para escolher um número
+  // diferente, e para isso basta digitar.
   const referenceInterval = positiveIntOrNull(guess) ?? measuredIntervalDays ?? null
   const suggestedAlert = automaticAlertDays(referenceInterval)
 
@@ -202,14 +205,10 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
                   <>
                     {" "}
                     Com {referenceInterval} dias de ciclo, isso dá{" "}
-                    <strong>{suggestedAlert} {suggestedAlert === 1 ? "dia" : "dias"}</strong>.{" "}
-                    <button
-                      type="button"
-                      onClick={() => setAlert(String(suggestedAlert))}
-                      className="underline underline-offset-2 hover:no-underline"
-                    >
-                      Fixar esse valor
-                    </button>
+                    <strong>
+                      {suggestedAlert} {suggestedAlert === 1 ? "dia" : "dias"}
+                    </strong>
+                    .
                   </>
                 ) : (
                   " Quanto mais longo o ciclo, maior a antecedência."
