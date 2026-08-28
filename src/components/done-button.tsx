@@ -123,7 +123,7 @@ export function DoneButton({
         disabled={pending}
         aria-label={`Registrar que fiz "${name}" hoje`}
         title="Registrar que fiz hoje"
-        className="size-10 shrink-0 rounded-full bg-mint text-ink hover:bg-mint/80"
+        className="size-9 shrink-0 rounded-full bg-mint text-ink hover:bg-mint/80"
       >
         <Check className="size-5" strokeWidth={3} aria-hidden />
       </Button>
