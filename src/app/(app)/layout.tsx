@@ -1,7 +1,9 @@
 import { X } from "lucide-react"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { auth, signOut } from "@/auth"
+import { NavLinks } from "@/components/nav-links"
 import { Star } from "@/components/stickers"
 import { Button } from "@/components/ui/button"
 
@@ -13,22 +15,28 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      {/* Barra de título, como a janelinha da referência. */}
+      {/* Barra de navegação. O conteúdo vai até as bordas em vez de ficar preso
+          na largura da lista: com max-w-2xl, no desktop sobravam dois vazios
+          rosas enormes nas laterais e a barra parecia um retângulo sem função. */}
       <header className="sticky top-0 z-30 border-b-2 border-border bg-candy">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-2 px-4 py-2">
-          <div className="flex items-center gap-2">
-            <Star className="size-4 text-butter" />
-            <span className="font-heading text-sm tracking-tight text-ink">
-              activity tracker
-            </span>
+        <div className="flex w-full items-center justify-between gap-3 px-4 py-2 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+            <Link href="/" className="flex shrink-0 items-center gap-2">
+              <Star className="size-4 text-butter" />
+              {/* Some no celular: aí o espaço vale mais para a navegação. */}
+              <span className="hidden font-heading text-sm tracking-tight text-ink sm:inline">
+                activity tracker
+              </span>
+            </Link>
+
+            <NavLinks />
           </div>
 
-          {/* Nome escrito no lugar da bolinha com a inicial: "J" exige decodificar
-              e nao cabe em duas contas que dividem atividades. O sair e o ✕ da
-              barra de titulo, em vermelho proprio — o destructive da paleta e
-              rosado demais e sumiria contra o rosa daqui. */}
-          <div className="flex items-center gap-2">
-            <span className="font-heading text-[10px] text-ink" title={name ?? undefined}>
+          <div className="flex shrink-0 items-center gap-2">
+            <span
+              className="hidden font-heading text-[10px] text-ink sm:inline"
+              title={name ?? undefined}
+            >
               {(name ?? "").split(" ")[0].toLowerCase()}
             </span>
 

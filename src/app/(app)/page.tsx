@@ -3,7 +3,6 @@ import Link from "next/link"
 
 import { auth } from "@/auth"
 import { ActivityRow } from "@/components/activity-row"
-import { PillLink } from "@/components/pill-link"
 import { Smiley, Sparkles, Star } from "@/components/stickers"
 import { Button } from "@/components/ui/button"
 import { listActivities, type Filter } from "@/lib/activities"
@@ -60,8 +59,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
         </ul>
       )}
 
-      <div className="flex items-center gap-3 px-4 py-8">
-        <PillLink href="/archived">ver arquivadas</PillLink>
+      <div className="flex justify-center px-4 py-10">
         <Sparkles />
       </div>
 
