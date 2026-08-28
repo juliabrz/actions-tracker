@@ -20,6 +20,20 @@ function enabled(): boolean {
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
 
+/**
+ * Esta rota monta HTML na mão, então nome vindo do banco precisa ser escapado.
+ * Não há React aqui para fazer isso automaticamente, e o nome vem do perfil do
+ * Google — dado externo.
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;")
+}
+
 export async function GET(request: Request) {
   if (!enabled()) return new Response("Not found", { status: 404 })
 
@@ -31,7 +45,7 @@ export async function GET(request: Request) {
       .map(
         (u) =>
           `<li><a href="/dev-login?email=${encodeURIComponent(u.email)}">` +
-          `Entrar como <strong>${u.name ?? u.email}</strong></a></li>`,
+          `Entrar como <strong>${escapeHtml(u.name ?? u.email)}</strong></a></li>`,
       )
       .join("")
 

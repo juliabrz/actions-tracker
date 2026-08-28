@@ -22,6 +22,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: { signIn: "/login", error: "/login" },
   callbacks: {
     signIn({ profile }) {
+      // Exige e-mail verificado além da allowlist: sem isso, uma conta de
+      // domínio próprio com e-mail não confirmado poderia casar com um endereço
+      // da lista.
+      if (profile?.email_verified === false) return false
       const email = profile?.email?.toLowerCase()
       return Boolean(email && allowedEmails.includes(email))
     },

@@ -235,6 +235,22 @@ Cada item aqui foi discutido e adiado de propósito.
 | Mais de uma casa/grupo por pessoa | Ver seção 2 |
 | Fotos, gráficos, exportação | Sem demanda real |
 
+## 8.1 Segurança
+
+**Acesso.** Login só por Google, com allowlist de e-mails em `ALLOWED_EMAILS` verificada no callback de `signIn`, mais a exigência de e-mail verificado pelo provedor. A lista falha fechada: variável vazia significa que ninguém entra.
+
+**Autorização.** Todas as Server Actions chamam `requireUser()`, e todas que recebem um `activityId` chamam `requireAccess()`, que só encontra a atividade se ela for sua ou compartilhada. Isso vale porque Server Action é endpoint HTTP: o layout protege as páginas, não as ações.
+
+Verificado rodando: a atividade pessoal da Julia devolve `200` para ela, `404` para a Marina e `307` para quem não está logado. O `404` — em vez de `403` — evita confirmar que o recurso existe.
+
+**Entrada.** Nomes, dias e valores são saneados **no servidor**, em `lib/validation.ts`, com testes. Os tipos do TypeScript somem em tempo de execução e a validação do formulário roda no cliente, que não é um controle — uma requisição forjada manda o que quiser. Os limites cobrem também o que a coluna comporta: valor acima de `numeric(10,2)` vira mensagem, não erro 500.
+
+**Sessão.** Cookie `HttpOnly`, `SameSite=lax`, sessão em banco com validade de 30 dias.
+
+**Rota `/dev-login`.** Travada duplamente: só fora de produção **e** com `DEV_LOGIN=true`. Ela monta HTML à mão, então escapa o nome vindo do banco — sem React ali, nada faz isso sozinho.
+
+**Dependências.** As 4 vulnerabilidades moderadas do `npm audit` estão no `esbuild` dentro do `drizzle-kit`, ferramenta de linha de comando que não vai para produção.
+
 ## 9. Riscos conhecidos
 
 **Um aviso que só existe dentro do site não é um aviso — é um relatório.** Ele só funciona se o usuário já abriu. Combinado com o padrão de uso previsto (abrir o app *quando faz*, não *quando está na hora de fazer*), o risco concreto é registrar tudo direitinho por meses e nunca ser avisada de nada.

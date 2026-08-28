@@ -9,16 +9,17 @@ import { activities, occurrences } from "@/db/schema"
 import { requireAccess } from "@/lib/activities"
 import { isUniqueViolation } from "@/lib/db-errors"
 import { isValidDate, today } from "@/lib/dates"
+import {
+  MAX_NAME_LENGTH,
+  sanitizeCost,
+  sanitizeDays,
+  sanitizeName,
+  sanitizeScope,
+} from "@/lib/validation"
 
 export type Result<T = undefined> =
   | ({ ok: true } & (T extends undefined ? object : { data: T }))
   | { ok: false; error: string }
-
-function parseCost(cost: string | null | undefined): string | null {
-  if (!cost) return null
-  const n = Number(cost.replace(",", "."))
-  return Number.isFinite(n) && n >= 0 ? n.toFixed(2) : null
-}
 
 export async function recordOccurrence(input: {
   activityId: string
@@ -41,7 +42,7 @@ export async function recordOccurrence(input: {
         date,
         doneById: user.id,
         approximate: input.approximate ?? false,
-        cost: parseCost(input.cost),
+        cost: sanitizeCost(input.cost),
       })
       .returning({ id: occurrences.id })
 
@@ -81,7 +82,7 @@ export async function updateOccurrence(input: {
   await requireAccess(user.id, target.activityId)
   await db
     .update(occurrences)
-    .set({ cost: parseCost(input.cost) })
+    .set({ cost: sanitizeCost(input.cost) })
     .where(eq(occurrences.id, input.occurrenceId))
 
   revalidatePath("/")
@@ -117,8 +118,16 @@ export async function createActivity(input: {
 }): Promise<Result<{ activityId: string }>> {
   const user = await requireUser()
 
-  const name = input.name.trim()
-  if (!name) return { ok: false, error: "Dê um nome para a atividade." }
+  const name = sanitizeName(input.name)
+  if (!name) {
+    return {
+      ok: false,
+      error: `Dê um nome para a atividade, com até ${MAX_NAME_LENGTH} caracteres.`,
+    }
+  }
+
+  const scope = sanitizeScope(input.scope)
+  if (!scope) return { ok: false, error: "Escolha quem acompanha." }
 
   if (input.lastDoneOn) {
     if (!isValidDate(input.lastDoneOn)) return { ok: false, error: "Data inválida." }
@@ -132,9 +141,9 @@ export async function createActivity(input: {
     .values({
       ownerId: user.id,
       name,
-      scope: input.scope,
-      guessedIntervalDays: input.guessedIntervalDays ?? null,
-      alertDaysBefore: input.alertDaysBefore ?? null,
+      scope,
+      guessedIntervalDays: sanitizeDays(input.guessedIntervalDays),
+      alertDaysBefore: sanitizeDays(input.alertDaysBefore),
     })
     .returning({ id: activities.id })
 
@@ -163,16 +172,24 @@ export async function updateActivity(input: {
   const user = await requireUser()
   await requireAccess(user.id, input.activityId)
 
-  const name = input.name.trim()
-  if (!name) return { ok: false, error: "Dê um nome para a atividade." }
+  const name = sanitizeName(input.name)
+  if (!name) {
+    return {
+      ok: false,
+      error: `Dê um nome para a atividade, com até ${MAX_NAME_LENGTH} caracteres.`,
+    }
+  }
+
+  const scope = sanitizeScope(input.scope)
+  if (!scope) return { ok: false, error: "Escolha quem acompanha." }
 
   await db
     .update(activities)
     .set({
       name,
-      scope: input.scope,
-      guessedIntervalDays: input.guessedIntervalDays ?? null,
-      alertDaysBefore: input.alertDaysBefore ?? null,
+      scope,
+      guessedIntervalDays: sanitizeDays(input.guessedIntervalDays),
+      alertDaysBefore: sanitizeDays(input.alertDaysBefore),
     })
     .where(eq(activities.id, input.activityId))
 
