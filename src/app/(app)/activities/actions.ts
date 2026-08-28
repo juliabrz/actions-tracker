@@ -7,16 +7,12 @@ import { requireUser } from "@/auth"
 import { db } from "@/db"
 import { activities, occurrences } from "@/db/schema"
 import { requireAccess } from "@/lib/activities"
+import { isUniqueViolation } from "@/lib/db-errors"
 import { isValidDate, today } from "@/lib/dates"
 
 export type Result<T = undefined> =
   | ({ ok: true } & (T extends undefined ? object : { data: T }))
   | { ok: false; error: string }
-
-/** Postgres unique_violation — the activity is already logged for that day. */
-function isDuplicate(e: unknown): boolean {
-  return typeof e === "object" && e !== null && "code" in e && e.code === "23505"
-}
 
 function parseCost(cost: string | null | undefined): string | null {
   if (!cost) return null
@@ -53,7 +49,7 @@ export async function recordOccurrence(input: {
     revalidatePath(`/activities/${input.activityId}`)
     return { ok: true, data: { occurrenceId: created.id } }
   } catch (e) {
-    if (isDuplicate(e)) {
+    if (isUniqueViolation(e)) {
       return { ok: false, error: "Esta atividade já foi registrada nesse dia." }
     }
     throw e
