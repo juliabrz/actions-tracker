@@ -46,11 +46,9 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   const editing = Boolean(activity)
   const router = useRouter()
   const [pending, start] = useTransition()
-  // Já abre quando a ação tem algo configurado: um valor salvo que só aparece
-  // depois de um clique é um valor que o usuário não sabe que existe.
-  const [showAdvanced, setShowAdvanced] = useState(
-    Boolean(activity?.guessedIntervalDays ?? activity?.alertDaysBefore),
-  )
+  // Já abre quando há override salvo: um valor que só aparece depois de um
+  // clique é um valor que o usuário não sabe que existe.
+  const [showAdvanced, setShowAdvanced] = useState(Boolean(activity?.alertDaysBefore))
 
   const [name, setName] = useState(activity?.name ?? "")
   const [scope, setScope] = useState<Scope>(activity?.scope ?? "personal")
@@ -158,6 +156,24 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
         </div>
       )}
 
+      <div className="space-y-2">
+        <Label htmlFor="guess">A cada quantos dias você acha que faz?</Label>
+        <Input
+          id="guess"
+          type="text"
+          inputMode="numeric"
+          value={guess}
+          onChange={(e) => setGuess(soDigitos(e.target.value))}
+          placeholder="opcional"
+          className="w-36"
+        />
+        <p className="text-xs text-muted-foreground">
+          {measuredIntervalDays != null
+            ? "Esta atividade já tem ciclo medido, então o palpite não é mais usado."
+            : "Só um palpite para os primeiros dias. É descartado assim que existir um ciclo medido de verdade."}
+        </p>
+      </div>
+
       <button
         type="button"
         onClick={() => setShowAdvanced((v) => !v)}
@@ -168,23 +184,6 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
 
       {showAdvanced && (
         <div className="pop-panel space-y-5 p-4">
-          <div className="space-y-2">
-            <Label htmlFor="guess">A cada quantos dias você acha que faz?</Label>
-            <Input
-              id="guess"
-              type="text"
-              inputMode="numeric"
-              value={guess}
-              onChange={(e) => setGuess(soDigitos(e.target.value))}
-              placeholder="opcional"
-              className="w-36"
-            />
-            <p className="text-xs text-muted-foreground">
-              Só um palpite para os primeiros dias. É descartado assim que existir
-              um ciclo medido de verdade.
-            </p>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="alert">Avisar quantos dias antes?</Label>
             {/* Sem sufixo ao lado: a unidade já está no rótulo, e com ela aqui o
