@@ -37,17 +37,24 @@ const isPglite = process.env.DATABASE_URL.startsWith("pglite://")
  */
 const globalForDb = globalThis as unknown as { __dbPromise?: Promise<Db> }
 
+/** `next build` roda com NODE_ENV=production mesmo localmente. */
+const isBuild = process.env.NEXT_PHASE === "phase-production-build"
+
 async function createPglite(): Promise<Db> {
-  // Guards a *running* production server, not `next build`. The build runs with
-  // NODE_ENV=production even locally, and refusing there would mean you cannot
-  // build the app while pointing at the development database.
-  const isBuild = process.env.NEXT_PHASE === "phase-production-build"
+  // Barra um servidor de produção *no ar*, não o build — recusar aqui impediria
+  // buildar apontando para o banco de desenvolvimento.
   if (process.env.NODE_ENV === "production" && !isBuild) {
     throw new Error("pglite:// is a development-only DATABASE_URL")
   }
   const { PGlite } = await import("@electric-sql/pglite")
   const { drizzle } = await import("drizzle-orm/pglite")
-  const dir = process.env.DATABASE_URL!.replace("pglite://", "")
+
+  // Durante o build, banco em memória e descartável. `next build` roda em vários
+  // workers, e cada um abriria o mesmo diretório: era isso que soltava
+  // "RuntimeError: Aborted()" no meio do build e podia corromper o banco de
+  // desenvolvimento. Nenhuma página é pré-renderizada com dados, então um banco
+  // vazio serve.
+  const dir = isBuild ? undefined : process.env.DATABASE_URL!.replace("pglite://", "")
   return drizzle(new PGlite(dir), { schema }) as unknown as Db
 }
 
