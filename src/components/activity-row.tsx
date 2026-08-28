@@ -48,7 +48,7 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
         <div className="flex items-center gap-2">
           <span className="truncate font-medium">{activity.name}</span>
           {activity.scope === "shared" && (
-            <span className="shrink-0 rounded-full border-2 border-border bg-seafoam px-2 text-[10px] font-semibold uppercase tracking-wide text-ink">
+            <span className="shrink-0 rounded-full border-2 border-border bg-seafoam px-2 py-0.5 font-heading text-[9px] text-ink">
               nós duas
             </span>
           )}

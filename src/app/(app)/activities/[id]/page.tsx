@@ -45,7 +45,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
           <DoneButton activityId={activity.id} name={activity.name} />
         </div>
         {activity.scope === "shared" && (
-          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink">
+          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2.5 py-1 font-heading text-[10px] text-ink">
             nós duas
           </span>
         )}
