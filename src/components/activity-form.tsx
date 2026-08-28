@@ -51,10 +51,9 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   const [name, setName] = useState(activity?.name ?? "")
   const [scope, setScope] = useState<Scope>(activity?.scope ?? "personal")
   const [lastDoneOn, setLastDoneOn] = useState("")
-  // Padrão marcado: quem responde "quando foi a última vez?" quase sempre está
-  // lembrando de cabeça. Prometer menos precisão do que se tem é seguro; o
-  // contrário envenena a confiança da estimativa.
-  const [lastDoneApproximate, setLastDoneApproximate] = useState(true)
+  // Padrão desmarcado: a data vem de um seletor de calendário, então tratá-la
+  // como exata é a leitura literal do que foi preenchido. Quem chutou marca.
+  const [lastDoneApproximate, setLastDoneApproximate] = useState(false)
   const [guess, setGuess] = useState(activity?.guessedIntervalDays?.toString() ?? "")
   const [alert, setAlert] = useState(activity?.alertDaysBefore?.toString() ?? "")
 

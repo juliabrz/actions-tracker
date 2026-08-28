@@ -147,7 +147,7 @@ export async function createActivity(input: {
       activityId: created.id,
       date: input.lastDoneOn,
       doneById: user.id,
-      approximate: input.lastDoneApproximate ?? true,
+      approximate: input.lastDoneApproximate ?? false,
     })
   }
 

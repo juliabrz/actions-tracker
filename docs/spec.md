@@ -136,7 +136,7 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 - Ações "em dia" **não** ficam escondidas atrás de um toque: ver que está tudo em dia é parte do motivo de abrir o app.
 
 ### `/activities/new`
-Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e, com ela, a âncora sem a qual não há o que projetar. Ao preencher a data aparece a marcação **"data aproximada"**, ligada por padrão: quem responde essa pergunta quase sempre lembra de cabeça, e prometer menos precisão do que se tem é seguro, enquanto o contrário envenena a confiança da estimativa.
+Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e, com ela, a âncora sem a qual não há o que projetar. Ao preencher a data aparece a marcação **"data aproximada"**, desligada por padrão: a data vem de um seletor de calendário, então tratá-la como exata é a leitura literal do que foi preenchido. Quem respondeu de cabeça marca a caixa e rebaixa a confiança de propósito.
 
 Atrás de "mais opções": o palpite de ciclo e o override do aviso. Ao digitar o palpite, o campo de aviso mostra ao vivo quantos dias aquele ciclo produziria, com um link para fixar. **Sugere em vez de preencher**: um número escrito no campo vira override e congela, enquanto o automático acompanha a mediana conforme os ciclos reais substituem o palpite.
 

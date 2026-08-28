@@ -20,7 +20,7 @@ export function BackfillForm({ activityId }: { activityId: string }) {
   const router = useRouter()
   const [pending, start] = useTransition()
   const [date, setDate] = useState("")
-  const [approximate, setApproximate] = useState(true)
+  const [approximate, setApproximate] = useState(false)
   const [cost, setCost] = useState("")
 
   function submit(event: React.FormEvent) {
