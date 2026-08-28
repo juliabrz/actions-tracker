@@ -20,6 +20,8 @@ import { today } from "@/lib/dates"
 type Scope = "personal" | "shared"
 
 type Props = {
+  /** O que o alerta automático daria hoje, para o campo não parecer arbitrário. */
+  automaticAlertDays?: number | null
   activity?: {
     id: string
     name: string
@@ -34,11 +36,15 @@ function positiveIntOrNull(value: string): number | null {
   return value.trim() !== "" && Number.isFinite(n) && n > 0 ? Math.round(n) : null
 }
 
-export function ActivityForm({ activity }: Props) {
+export function ActivityForm({ activity, automaticAlertDays }: Props) {
   const editing = Boolean(activity)
   const router = useRouter()
   const [pending, start] = useTransition()
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  // Já abre quando a ação tem algo configurado: um valor salvo que só aparece
+  // depois de um clique é um valor que o usuário não sabe que existe.
+  const [showAdvanced, setShowAdvanced] = useState(
+    Boolean(activity?.guessedIntervalDays ?? activity?.alertDaysBefore),
+  )
 
   const [name, setName] = useState(activity?.name ?? "")
   const [scope, setScope] = useState<Scope>(activity?.scope ?? "personal")
@@ -143,16 +149,28 @@ export function ActivityForm({ activity }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="alert">Me avise com quantos dias de antecedência?</Label>
-            <Input
-              id="alert"
-              type="number"
-              min={1}
-              inputMode="numeric"
-              value={alert}
-              onChange={(e) => setAlert(e.target.value)}
-              placeholder="automático (15% do intervalo)"
-            />
+            <Label htmlFor="alert">Avisar quantos dias antes?</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="alert"
+                type="number"
+                min={1}
+                inputMode="numeric"
+                value={alert}
+                onChange={(e) => setAlert(e.target.value)}
+                placeholder="7"
+                className="w-28"
+              />
+              <span className="text-sm text-muted-foreground">dias antes</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Deixe vazio para automático: quanto mais longo o ciclo, maior a
+              antecedência
+              {automaticAlertDays != null
+                ? ` — hoje daria ${automaticAlertDays} ${automaticAlertDays === 1 ? "dia" : "dias"}`
+                : ""}
+              .
+            </p>
           </div>
         </div>
       )}

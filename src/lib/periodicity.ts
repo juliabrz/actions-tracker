@@ -41,6 +41,16 @@ export type Forecast = {
   highlight: boolean
 }
 
+/**
+ * The alert lead time when the user set no override: a share of the interval,
+ * never less than a day. Exported because the form shows the user what the
+ * automatic value would be.
+ */
+export function automaticAlertDays(intervalDays: number | null): number | null {
+  if (intervalDays == null) return null
+  return Math.max(1, Math.round(intervalDays * ALERT_FRACTION))
+}
+
 function median(values: number[]): number {
   const sorted = [...values].sort((a, b) => a - b)
   const mid = Math.floor(sorted.length / 2)
@@ -112,8 +122,7 @@ export function estimate(
   // no guess.
   if (intervalDays != null && lastDate != null) {
     nextDate = shiftDays(lastDate, intervalDays)
-    alertThresholdDays =
-      alertDaysBefore ?? Math.max(1, Math.round(intervalDays * ALERT_FRACTION))
+    alertThresholdDays = alertDaysBefore ?? automaticAlertDays(intervalDays)
   }
 
   const daysRemaining = nextDate ? daysBetween(todayStr, nextDate) : null
