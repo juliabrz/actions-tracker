@@ -14,7 +14,7 @@ const body = Nunito({
 })
 
 const display = Fredoka({
-  variable: "--font-display",
+  variable: "--font-fredoka",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 })

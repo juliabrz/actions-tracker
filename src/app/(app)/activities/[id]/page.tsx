@@ -41,7 +41,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
 
       <header className="space-y-2">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-2xl font-semibold">{activity.name}</h1>
+          <h1 className="font-display text-2xl text-foreground">{activity.name}</h1>
           <DoneButton activityId={activity.id} name={activity.name} />
         </div>
         {activity.scope === "shared" && (

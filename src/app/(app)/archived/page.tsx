@@ -1,6 +1,8 @@
 import Link from "next/link"
 
 import { auth } from "@/auth"
+import { Star } from "@/components/stickers"
+import { WindowPanel } from "@/components/window-panel"
 import { listActivities } from "@/lib/activities"
 
 export default async function ArchivedPage() {
@@ -12,12 +14,12 @@ export default async function ArchivedPage() {
       <Link href="/" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline">
         ← todas as ações
       </Link>
-      <h1 className="text-xl font-semibold">Arquivadas</h1>
-
-      {activities.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nada arquivado.</p>
-      ) : (
-        <ul className="pop-panel divide-y-2 divide-border overflow-hidden p-0">
+      
+      <WindowPanel title="Arquivadas" sticker={<Star className="size-5 text-lilac" />}>
+        {activities.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nada arquivado.</p>
+        ) : (
+          <ul className="divide-y-2 divide-border">
           {activities.map((a) => (
             <li key={a.id}>
               <Link href={`/activities/${a.id}`} className="block px-3 py-3 hover:bg-bubblegum">
@@ -27,10 +29,11 @@ export default async function ArchivedPage() {
                   histórico
                 </span>
               </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </WindowPanel>
     </div>
   )
 }

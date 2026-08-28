@@ -1,10 +1,13 @@
 import { ActivityForm } from "@/components/activity-form"
+import { Star } from "@/components/stickers"
+import { WindowPanel } from "@/components/window-panel"
 
 export default function NewActivityPage() {
   return (
-    <div className="mx-auto w-full max-w-md space-y-6 p-4">
-      <h1 className="text-xl font-semibold">Nova ação</h1>
-      <ActivityForm />
+    <div className="mx-auto w-full max-w-md p-4">
+      <WindowPanel title="Nova ação" sticker={<Star className="size-5 text-butter" />}>
+        <ActivityForm />
+      </WindowPanel>
     </div>
   )
 }
