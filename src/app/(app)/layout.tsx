@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { auth, signOut } from "@/auth"
+import { Star } from "@/components/stickers"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 
@@ -16,10 +17,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <header className="sticky top-0 z-30 border-b-2 border-border bg-candy">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-2 px-4 py-2">
           <div className="flex items-center gap-2">
-            <span aria-hidden className="flex gap-1">
-              <span className="size-2.5 rounded-full border-2 border-ink bg-butter" />
-              <span className="size-2.5 rounded-full border-2 border-ink bg-mint" />
-            </span>
+            <Star className="size-4 text-butter" />
             <span className="font-heading text-sm tracking-tight text-ink">
               activity tracker
             </span>

@@ -3,6 +3,7 @@ import Link from "next/link"
 
 import { auth } from "@/auth"
 import { ActivityRow } from "@/components/activity-row"
+import { Smiley, Sparkles, Star } from "@/components/stickers"
 import { Button } from "@/components/ui/button"
 import { listActivities, type Filter } from "@/lib/activities"
 
@@ -42,7 +43,8 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       </nav>
 
       {activities.length === 0 ? (
-        <div className="pop-panel mx-4 px-4 py-14 text-center">
+        <div className="pop-panel mx-4 space-y-3 px-4 py-14 text-center">
+          <Smiley className="mx-auto size-12 text-butter" />
           <p className="text-sm text-muted-foreground">
             {filter === "all"
               ? "Nada cadastrado ainda. Comece pela coisa que você mais esquece."
@@ -57,7 +59,8 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
         </ul>
       )}
 
-      <div className="px-4 py-8">
+      <div className="flex items-center gap-2 px-4 py-8">
+        <Sparkles />
         <Link
           href="/archived"
           className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-ink hover:underline"
@@ -76,6 +79,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
         <Link href="/activities/new">
           <Plus className="size-5" aria-hidden />
           Nova ação
+          <Star className="size-4 text-butter" />
         </Link>
       </Button>
     </div>

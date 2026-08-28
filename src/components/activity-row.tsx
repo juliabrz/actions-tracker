@@ -36,7 +36,7 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
   const tone = TONE[forecast.status][forecast.highlight ? "strong" : "soft"]
 
   return (
-    <li className="pop-panel flex items-stretch overflow-hidden p-0">
+    <li className="pop-panel flex items-stretch overflow-hidden p-0 transition-transform hover:-translate-x-px hover:-translate-y-px">
       {/* Faixa de estado: com contorno em volta do card inteiro, uma borda
           esquerda colorida sumiria — então a faixa vira um bloco próprio. */}
       <span

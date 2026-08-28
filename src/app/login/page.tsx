@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { auth, signIn } from "@/auth"
+import { Flower, Heart } from "@/components/stickers"
 import { Button } from "@/components/ui/button"
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -16,13 +17,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         {/* Barra de título da janelinha. */}
         <div className="flex items-center justify-between border-b-2 border-border bg-candy px-3 py-2">
           <span className="font-heading text-xs text-ink">activity tracker</span>
-          <span aria-hidden className="flex gap-1">
-            <span className="size-3 rounded-full border-2 border-ink bg-butter" />
-            <span className="size-3 rounded-full border-2 border-ink bg-mint" />
-          </span>
+          <Flower className="size-5 text-butter" />
         </div>
 
         <div className="space-y-5 p-6 text-center">
+          <Heart className="mx-auto size-10 text-candy" />
           <p className="text-sm text-muted-foreground">
             De quanto em quanto tempo você faz cada coisa.
           </p>
