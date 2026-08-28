@@ -130,7 +130,8 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 - Lista única, ordenada por urgência: atrasadas → se aproximando → em dia.
 - Filtro no topo: minhas / compartilhadas / todas.
 - Cada linha mostra nome, estado, próxima data, confiança e — em ações compartilhadas — quem fez por último.
-- **Botão "fiz" em cada linha**, um toque só. Esse é o caminho quente: o registro acontece no momento do ato, geralmente no celular. Mais de dois toques de atrito e o usuário para de registrar em três semanas — e sem dados não há periodicidade nenhuma para calcular.
+- **Botão "fiz" em cada linha**, um toque só — um círculo com check. Esse é o caminho quente: o registro acontece no momento do ato, geralmente no celular. Mais de dois toques de atrito e o usuário para de registrar em três semanas — e sem dados não há periodicidade nenhuma para calcular.
+- **Os campos opcionais vêm depois do toque, não antes.** O toque grava na hora; o aviso que aparece traz "Desfazer" e "Detalhes", e é por Detalhes que se anexa o valor gasto ou a marcação de data aproximada. Pedir isso antes colocaria atrito exatamente onde o desenho inteiro existe para não ter.
 - **Desfazer obrigatório:** snackbar por ~10 segundos após o registro. Botão de um toque garante registro acidental, e uma ocorrência falsa envenena a mediana.
 - Ações "em dia" **não** ficam escondidas atrás de um toque: ver que está tudo em dia é parte do motivo de abrir o app.
 

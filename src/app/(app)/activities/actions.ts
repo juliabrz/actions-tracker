@@ -60,6 +60,37 @@ export async function recordOccurrence(input: {
   }
 }
 
+/**
+ * Fills in the optional fields of an occurrence that already exists.
+ *
+ * Deliberately cannot change the date: date editing was rejected in favour of
+ * delete-and-re-add (spec §3). This exists so the one-tap path stays one tap —
+ * you log first, and attach cost or the approximate flag afterwards.
+ */
+export async function updateOccurrence(input: {
+  occurrenceId: string
+  approximate: boolean
+  cost?: string | null
+}): Promise<Result> {
+  const user = await requireUser()
+
+  const target = await db.query.occurrences.findFirst({
+    where: eq(occurrences.id, input.occurrenceId),
+    columns: { id: true, activityId: true },
+  })
+  if (!target) return { ok: false, error: "Registro não encontrado." }
+
+  await requireAccess(user.id, target.activityId)
+  await db
+    .update(occurrences)
+    .set({ approximate: input.approximate, cost: parseCost(input.cost) })
+    .where(eq(occurrences.id, input.occurrenceId))
+
+  revalidatePath("/")
+  revalidatePath(`/activities/${target.activityId}`)
+  return { ok: true }
+}
+
 /** Backs both the undo snackbar and the delete button in the history. */
 export async function deleteOccurrence(occurrenceId: string): Promise<Result> {
   const user = await requireUser()

@@ -212,7 +212,17 @@
 
 /** O toast do "Desfazer" é o elemento mais visto do app depois da lista. */
 @layer components {
-  [data-sonner-toast] {
+  /* Toast custom traz o próprio pop-panel: o invólucro do sonner some para não
+     desenhar borda e sombra em dobro. */
+  [data-sonner-toast]:has(.pop-panel) {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    width: auto !important;
+  }
+
+  [data-sonner-toast]:not(:has(.pop-panel)) {
     border: 2px solid var(--color-border) !important;
     border-radius: var(--radius) !important;
     box-shadow: 3px 3px 0 0 var(--color-border) !important;
