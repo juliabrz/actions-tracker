@@ -47,15 +47,18 @@ const { shiftDays, today } = await import("../src/lib/dates")
 
 const { activities, occurrences, users } = schema
 
-const client = new PGlite(url.replace("pglite://", ""))
+const dir = url.replace("pglite://", "")
+
+// Apaga o diretorio antes de abrir. O seed ja recria tudo, e sem isso ele nao
+// serve para o que mais importa: recuperar um banco corrompido — ele tentaria
+// abrir o que esta quebrado e morreria na primeira instrucao.
+const { rmSync } = await import("node:fs")
+rmSync(dir, { recursive: true, force: true })
+
+const client = new PGlite(dir)
 const db = drizzle(client, { schema })
 
 await migrate(db, { migrationsFolder: "./drizzle" })
-
-// Wipe: cascades take the occurrences with the activities.
-await db.delete(occurrences)
-await db.delete(activities)
-await db.delete(users)
 
 const [julia, sister] = await db
   .insert(users)

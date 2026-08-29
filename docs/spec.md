@@ -234,7 +234,7 @@ O seed cria 12 ações desenhadas para exercitar cada estado da interface — at
 
 Não há contorno do lado da aplicação — não existe opção de `next dev` em processo único, e cache em `globalThis` não atravessa processos. As consultas são enfileiradas para eliminar a concorrência *dentro* de cada processo, o que reduz a frequência, mas não resolve.
 
-**Conserto quando quebrar:** parar o servidor e `npm run db:seed`. **Solução real:** um Postgres de verdade — é o que a Neon já é em produção, e nada disso existe lá.
+**Conserto quando quebrar:** parar o servidor e `npm run db:seed`, que apaga o diretório e recria tudo do zero — por isso funciona mesmo com o banco corrompido. **Solução real:** um Postgres de verdade — é o que a Neon já é em produção, e nada disso existe lá.
 
 **Uma armadilha registrada:** o `db` é cacheado em `globalThis`. O servidor de desenvolvimento avalia o módulo mais de uma vez, e cada instância do PGlite mantém sua própria imagem do banco em memória — sem o cache, uma escrita feita numa rota fica invisível para a renderização seguinte. Foi exatamente o que aconteceu na primeira tentativa de login.
 
