@@ -37,6 +37,44 @@ const isPglite = process.env.DATABASE_URL.startsWith("pglite://")
  */
 const globalForDb = globalThis as unknown as { __dbPromise?: Promise<Db> }
 
+/**
+ * Enfileira as consultas do PGlite, uma de cada vez.
+ *
+ * O PGlite é de conexão única e aborta o runtime WASM quando recebe consultas
+ * concorrentes — e um único carregamento de página já produz várias: o Next
+ * faz prefetch dos links da lista enquanto renderiza. Por isso o banco quebrava
+ * no uso real do navegador e sobrevivia aos testes com curl, que são
+ * sequenciais.
+ *
+ * A fila troca a corrida por espera. Custa latência sob carga, mas em um banco
+ * local de desenvolvimento isso é irrelevante perto de perder os dados.
+ *
+ * ATENÇÃO: isto resolve a concorrência *dentro* de um processo, não entre
+ * processos. O `next dev` renderiza rotas diferentes em workers diferentes, e
+ * cada worker abre a sua própria instância sobre o mesmo diretório — é essa a
+ * causa raiz da corrupção do banco local, e não há como contornar daqui. Um
+ * Postgres de verdade (Neon em produção) elimina o problema.
+ */
+function enfileirar<T extends object>(client: T): T {
+  let fila: Promise<unknown> = Promise.resolve()
+
+  return new Proxy(client, {
+    get(alvo, prop, receiver) {
+      const valor = Reflect.get(alvo, prop, receiver)
+      if (typeof valor !== "function") return valor
+      if (prop !== "query" && prop !== "exec" && prop !== "transaction") {
+        return valor.bind(alvo)
+      }
+      return (...args: unknown[]) => {
+        const execucao = fila.then(() => valor.apply(alvo, args))
+        // A fila ignora o erro para uma consulta que falha não travar as seguintes.
+        fila = execucao.catch(() => {})
+        return execucao
+      }
+    },
+  })
+}
+
 /** `next build` roda com NODE_ENV=production mesmo localmente. */
 const isBuild = process.env.NEXT_PHASE === "phase-production-build"
 
@@ -55,7 +93,7 @@ async function createPglite(): Promise<Db> {
   // desenvolvimento. Nenhuma página é pré-renderizada com dados, então um banco
   // vazio serve.
   const dir = isBuild ? undefined : process.env.DATABASE_URL!.replace("pglite://", "")
-  return drizzle(new PGlite(dir), { schema }) as unknown as Db
+  return drizzle(enfileirar(new PGlite(dir)), { schema }) as unknown as Db
 }
 
 function createNeon(): Db {

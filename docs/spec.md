@@ -230,6 +230,12 @@ Depois abra **`/dev-login`** e escolha entre Julia e Marina. Essa rota escreve a
 
 O seed cria 12 ações desenhadas para exercitar cada estado da interface — atrasada, chegando, em dia, sem previsão, palpite sem ciclo medido, previsão em cinza por ter só um ciclo, confiança rebaixada por data aproximada, outlier que a mediana precisa ignorar, override manual do aviso, valores em reais, ações compartilhadas entre as duas contas e uma arquivada.
 
+**Limitação conhecida do banco local.** O `next dev` renderiza rotas diferentes em **processos diferentes**, e cada um abre sua própria instância do PGlite sobre o mesmo diretório. PGlite é de processo único: isso corrompe os dados, em silêncio, e o estrago só aparece depois como `RuntimeError: Aborted()` numa consulta qualquer.
+
+Não há contorno do lado da aplicação — não existe opção de `next dev` em processo único, e cache em `globalThis` não atravessa processos. As consultas são enfileiradas para eliminar a concorrência *dentro* de cada processo, o que reduz a frequência, mas não resolve.
+
+**Conserto quando quebrar:** parar o servidor e `npm run db:seed`. **Solução real:** um Postgres de verdade — é o que a Neon já é em produção, e nada disso existe lá.
+
 **Uma armadilha registrada:** o `db` é cacheado em `globalThis`. O servidor de desenvolvimento avalia o módulo mais de uma vez, e cada instância do PGlite mantém sua própria imagem do banco em memória — sem o cache, uma escrita feita numa rota fica invisível para a renderização seguinte. Foi exatamente o que aconteceu na primeira tentativa de login.
 
 ## 8. Fora do escopo do v1
