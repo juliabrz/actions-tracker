@@ -27,6 +27,8 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
   if (!activity) notFound()
 
   const { forecast } = activity
+  const ultima = activity.occurrences[0]
+  const quemFez = ultima?.doneBy?.name?.split(" ")[0]
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 p-4">
@@ -35,8 +37,15 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
       <header className="space-y-2">
         <h1 className="font-heading text-2xl text-foreground">{activity.name}</h1>
         {activity.scope === "shared" && (
-          <span className="inline-block rounded-full border-2 border-border bg-seafoam px-2.5 py-1 font-pixel text-[10px] text-ink">
-            nós duas
+          <span
+            className="inline-block rounded-full border-2 border-border bg-seafoam px-2.5 py-1 font-pixel text-[10px] whitespace-nowrap text-ink"
+            title={
+              ultima?.doneBy?.name
+                ? `Última vez: ${ultima.doneBy.name}`
+                : "Atividade compartilhada"
+            }
+          >
+            {quemFez ? `${quemFez} fez` : "nós duas"}
           </span>
         )}
       </header>
@@ -48,6 +57,13 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
             .filter(Boolean)
             .join(" · ")}
         </p>
+        {activity.scope === "shared" && ultima && (
+          <p className="text-sm">
+            Última vez:{" "}
+            <strong className="font-semibold">{ultima.doneBy?.name ?? "?"}</strong>, em{" "}
+            {formatLongDate(ultima.date)}.
+          </p>
+        )}
         {forecast.alertThresholdDays != null && (
           <p className="text-xs text-muted-foreground">
             Aviso a partir de {forecast.alertThresholdDays} dias antes
