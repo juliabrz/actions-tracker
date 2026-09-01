@@ -131,7 +131,7 @@ A tela principal. Como não há notificação no v1, **esta tela é o produto in
 
 - Lista única, ordenada por urgência: atrasadas → se aproximando → em dia.
 - Filtro no topo: minhas / compartilhadas / todas.
-- Cada linha mostra nome, estado, próxima data, confiança e — em ações compartilhadas — quem fez por último.
+- Cada linha mostra nome, estado, próxima data e confiança. Em atividades compartilhadas, **quem fez por último aparece no chip ao lado do nome** — numa atividade revezada é o dado mais acionável da linha, e no fim do texto de metadados ele ficava escondido e sujeito a truncamento. Sem histórico, o chip volta a dizer apenas que a atividade é das duas.
 - **Botão "fiz" em cada linha**, um toque só — um círculo com check. Quando o dia já tem registro ele aparece apagado e não aceita toque: mostra o estado em vez de aceitar a ação e devolver erro de duplicata. Colorido significa "dá para agir"; apagado, "já está feito". Esse é o caminho quente: o registro acontece no momento do ato, geralmente no celular. Mais de dois toques de atrito e o usuário para de registrar em três semanas — e sem dados não há periodicidade nenhuma para calcular.
 - **O valor vem depois do toque, não antes.** O toque grava na hora; o aviso que aparece traz "Desfazer" e "Detalhes", e é por Detalhes que se anexa o valor gasto. Pedir isso antes colocaria atrito exatamente onde o desenho inteiro existe para não ter. A marcação de "data aproximada" **não** aparece aí: o toque registra hoje, então não há incerteza de data a declarar — e a caixa não deixava corrigir o dia, só rebaixava a confiança sem consertar nada.
 - **Desfazer obrigatório:** snackbar por ~10 segundos após o registro. Botão de um toque garante registro acidental, e uma ocorrência falsa envenena a mediana.

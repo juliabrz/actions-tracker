@@ -57,9 +57,22 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
       <Link href={`/activities/${activity.id}`} className="min-w-0 flex-1 py-3 pl-3 pr-2">
         <div className="flex items-center gap-2">
           <span className="truncate font-medium">{activity.name}</span>
+          {/* O chip carrega quem fez por último: numa atividade revezada é o dado
+              mais acionável da linha, e antes ficava no fim de um texto de 12px
+              que ainda por cima é truncado. Sem histórico, ele volta a dizer só
+              que a atividade é das duas. */}
           {activity.scope === "shared" && (
-            <span className="shrink-0 rounded-full border-2 border-border bg-seafoam px-2 py-0.5 font-pixel text-[9px] text-ink">
-              nós duas
+            <span
+              className="shrink-0 rounded-full border-2 border-border bg-seafoam px-2 py-0.5 font-pixel text-[9px] whitespace-nowrap text-ink"
+              title={
+                activity.lastDoneBy?.name
+                  ? `Última vez: ${activity.lastDoneBy.name}`
+                  : "Atividade compartilhada"
+              }
+            >
+              {activity.lastDoneBy?.name
+                ? `${activity.lastDoneBy.name.split(" ")[0]} fez`
+                : "nós duas"}
             </span>
           )}
         </div>
@@ -69,13 +82,7 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
         </div>
 
         <div className="truncate text-xs text-muted-foreground">
-          {[
-            describeInterval(forecast.intervalDays),
-            describeConfidence(forecast),
-            activity.scope === "shared" && activity.lastDoneBy?.name
-              ? `última: ${activity.lastDoneBy.name.split(" ")[0]}`
-              : null,
-          ]
+          {[describeInterval(forecast.intervalDays), describeConfidence(forecast)]
             .filter(Boolean)
             .join(" · ")}
         </div>
