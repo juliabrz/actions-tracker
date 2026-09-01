@@ -45,7 +45,7 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
                 : "Atividade compartilhada"
             }
           >
-            {quemFez ? `${quemFez} fez` : "nós duas"}
+            {quemFez ? `última: ${quemFez}` : "nós duas"}
           </span>
         )}
       </header>

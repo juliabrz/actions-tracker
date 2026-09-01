@@ -71,7 +71,7 @@ export function ActivityRow({ activity }: { activity: ActivityWithForecast }) {
               }
             >
               {activity.lastDoneBy?.name
-                ? `${activity.lastDoneBy.name.split(" ")[0]} fez`
+                ? `última: ${activity.lastDoneBy.name.split(" ")[0]}`
                 : "nós duas"}
             </span>
           )}
