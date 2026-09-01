@@ -57,10 +57,15 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
             .filter(Boolean)
             .join(" · ")}
         </p>
-        {activity.scope === "shared" && ultima && (
+        {ultima && (
           <p className="text-sm">
             Última vez:{" "}
-            <strong className="font-semibold">{ultima.doneBy?.name ?? "?"}</strong>, em{" "}
+            {activity.scope === "shared" && (
+              <>
+                <strong className="font-semibold">{ultima.doneBy?.name ?? "?"}</strong>
+                , em{" "}
+              </>
+            )}
             {formatLongDate(ultima.date)}.
           </p>
         )}

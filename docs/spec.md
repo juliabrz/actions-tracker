@@ -157,7 +157,7 @@ Nome, escopo e "quando foi a última vez?" — que cria a primeira ocorrência e
 O palpite de ciclo fica no fluxo principal, não escondido: sem ele o app fica mudo por meses numa atividade de ciclo longo, e esconder o campo faria do silêncio o padrão. Atrás de "mais opções" sobra só o override do aviso, que é exceção de verdade. Ao digitar o palpite, o texto de ajuda mostra ao vivo quantos dias aquele ciclo produziria — como informação, não como atalho. Houve um botão para adotar esse número; foi removido porque fixar exatamente o valor que o automático já produz não muda nada hoje e impede o ajuste amanhã, quando o ciclo mudar. Override existe para escolher um número **diferente** do calculado, e para isso basta digitar.
 
 ### `/activities/[id]` — Detalhe
-Histórico de ocorrências, formulário de registro (data já em hoje, mais valor e o checkbox "data aproximada"), apagar ocorrência, editar a atividade, arquivar e excluir.
+Resumo com prazo, intervalo, confiança e **última vez** — com o nome de quem fez em atividades compartilhadas, só a data nas pessoais, onde a resposta é sempre você. Depois: histórico de ocorrências, formulário de registro (data já em hoje, mais valor e o checkbox "data aproximada"), apagar ocorrência, editar a atividade, arquivar e excluir.
 
 **Não há botão de um toque aqui.** Ele existe para a lista, onde você passa os olhos e registra sem parar. Nesta tela você já entrou de propósito, e o formulário faz o mesmo com mais controle — data qualquer, valor, marcação. Manter os dois era oferecer dois caminhos para a mesma coisa, sendo que o de um toque esbarrava calado na constraint de unicidade quando o dia já tinha registro.
 
