@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Activity Tracker
 
-## Getting Started
+App para acompanhar coisas que se faz de tempos em tempos — cortar o cabelo, comprar ração, lavar as cortinas.
 
-First, run the development server:
+A inversão é o ponto: você não configura "a cada 30 dias". Você só registra o que fez, e **o intervalo emerge dos dados** — mediana dos últimos cinco ciclos, com o nível de confiança sempre visível.
+
+Uso pessoal, duas contas, acesso por allowlist.
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · Drizzle · Postgres (Neon) · Auth.js v5 com Google · Tailwind 4 · shadcn/ui
+
+## Rodando localmente
+
+O banco de desenvolvimento é [PGlite](https://pglite.dev) — Postgres em WASM, dentro do processo. Não precisa instalar nem subir nada.
 
 ```bash
+npm install
+cp .env.example .env.local     # DATABASE_URL já vem apontando para o PGlite
+npm run db:seed                # cria o banco e popula com 12 atividades de teste
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Depois abra **`/dev-login`** e escolha entre as duas contas do seed. Essa rota existe para exercitar a interface sem Google configurado, e é travada duas vezes: só fora de produção **e** com `DEV_LOGIN=true`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> **PGlite é de processo único.** O `next dev` renderiza rotas diferentes em processos diferentes, então o banco local corrompe de vez em quando. Quando quebrar: pare o servidor e rode `npm run db:seed`, que apaga tudo e recria. Não acontece em produção, onde o Postgres é de verdade.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Comandos
 
-## Learn More
+| | |
+|---|---|
+| `npm run dev` | servidor de desenvolvimento |
+| `npm run db:seed` | recria o banco local com dados de teste |
+| `npm run db:generate` | gera migration a partir do schema |
+| `npm run db:migrate` | aplica as migrations |
+| `npm test` | testes (Vitest) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
 
-To learn more about Next.js, take a look at the following resources:
+## Variáveis de ambiente
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Ver `.env.example`. Em produção, **`DEV_LOGIN` não deve existir** — a trava do `NODE_ENV` já barra a rota sozinha, mas duas travas é melhor que uma.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentação
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[`docs/spec.md`](docs/spec.md) é a fonte da verdade: domínio, regras de cálculo, decisões tomadas **e as descartadas com o motivo**. Código que discordar dela está errado — ou o documento precisa ser atualizado antes.
