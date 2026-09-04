@@ -13,7 +13,7 @@ A inversão é o ponto: o usuário não configura "a cada 30 dias". Ele só regi
 
 ## 2. Usuários e acesso
 
-Duas pessoas: a dona do app e sua irmã. Algumas ações são individuais, outras são revezadas entre as duas.
+Duas pessoas, com contas separadas. Algumas atividades são individuais; outras são revezadas entre as duas.
 
 - Login exclusivamente via **Google**.
 - Acesso controlado por **allowlist fixa de e-mails** em variável de ambiente (`EMAILS_PERMITIDOS`). Qualquer outra conta é recusada no callback de `signIn`.
@@ -226,7 +226,7 @@ npm run db:seed   # cria o banco, aplica as migrations e popula
 npm run dev
 ```
 
-Depois abra **`/dev-login`** e escolha entre Julia e Marina. Essa rota escreve a sessão e o cookie direto, o que é o único jeito de entrar sem Google enquanto a sessão é de banco — um provider de credenciais exigiria trocar a estratégia para JWT. Ela é duplamente travada: fora de produção **e** com `DEV_LOGIN=true`.
+Depois abra **`/dev-login`** e escolha entre as duas contas do seed. Essa rota escreve a sessão e o cookie direto, o que é o único jeito de entrar sem Google enquanto a sessão é de banco — um provider de credenciais exigiria trocar a estratégia para JWT. Ela é duplamente travada: fora de produção **e** com `DEV_LOGIN=true`.
 
 O seed cria 12 ações desenhadas para exercitar cada estado da interface — atrasada, chegando, em dia, sem previsão, palpite sem ciclo medido, previsão em cinza por ter só um ciclo, confiança rebaixada por data aproximada, outlier que a mediana precisa ignorar, override manual do aviso, valores em reais, ações compartilhadas entre as duas contas e uma arquivada.
 
@@ -261,7 +261,7 @@ Cada item aqui foi discutido e adiado de propósito.
 
 **Autorização.** Todas as Server Actions chamam `requireUser()`, e todas que recebem um `activityId` chamam `requireAccess()`, que só encontra a atividade se ela for sua ou compartilhada. Isso vale porque Server Action é endpoint HTTP: o layout protege as páginas, não as ações.
 
-Verificado rodando: a atividade pessoal da Julia devolve `200` para ela, `404` para a Marina e `307` para quem não está logado. O `404` — em vez de `403` — evita confirmar que o recurso existe.
+Verificado rodando: uma atividade pessoal devolve `200` para quem é dono, `404` para a outra conta e `307` para quem não está logado. O `404` — em vez de `403` — evita confirmar que o recurso existe.
 
 **Entrada.** Nomes, dias e valores são saneados **no servidor**, em `lib/validation.ts`, com testes. Os tipos do TypeScript somem em tempo de execução e a validação do formulário roda no cliente, que não é um controle — uma requisição forjada manda o que quiser. Os limites cobrem também o que a coluna comporta: valor acima de `numeric(10,2)` vira mensagem, não erro 500.
 
@@ -295,7 +295,7 @@ Nenhuma. As duas anteriores foram resolvidas:
 | 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ telas verificadas rodando |
 | 6 | Deploy na Vercel + Neon de produção | ⬜ |
 
-**O que já foi verificado rodando** (PGlite + seed): login, lista com ordenação por urgência, filtros, detalhe com histórico, cadastro, edição, arquivadas, e a regra de visibilidade — Marina vê 4 ações compartilhadas, Julia vê 11 (7 pessoais + 4 compartilhadas).
+**O que já foi verificado rodando** (PGlite + seed): login, lista com ordenação por urgência, filtros, detalhe com histórico, cadastro, edição, arquivadas, e a regra de visibilidade — a segunda conta vê 4 atividades compartilhadas, a primeira vê 11 (7 pessoais + 4 compartilhadas).
 
 **O que ainda não foi verificado:** as mutações. Registrar, desfazer, apagar, criar, editar e arquivar têm o caminho de dados exercitado indiretamente, mas o disparo real de Server Action a partir da interface nunca aconteceu. É o primeiro lugar onde procurar bug.
 

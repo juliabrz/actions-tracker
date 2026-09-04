@@ -60,11 +60,11 @@ const db = drizzle(client, { schema })
 
 await migrate(db, { migrationsFolder: "./drizzle" })
 
-const [julia, sister] = await db
+const [ana, bia] = await db
   .insert(users)
   .values([
-    { name: "Julia", email: "julia@exemplo.dev" },
-    { name: "Marina", email: "marina@exemplo.dev" },
+    { name: "Ana", email: "ana@exemplo.dev" },
+    { name: "Bia", email: "bia@exemplo.dev" },
   ])
   .returning()
 
@@ -89,65 +89,65 @@ const SEEDS: Seed[] = [
   {
     name: "Cortar o cabelo",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     entries: [{ daysAgo: 140 }, { daysAgo: 95 }, { daysAgo: 50 }],
     demonstrates: "atrasada há 5 dias · estimativa razoável",
   },
   {
     name: "Trocar a escova de dentes",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     entries: [{ daysAgo: 270 }, { daysAgo: 180 }, { daysAgo: 90 }],
     demonstrates: "vence hoje",
   },
   {
     name: "Comprar ração do gato",
     scope: "shared",
-    owner: julia.id,
+    owner: ana.id,
     entries: [
-      { daysAgo: 120, by: julia.id, cost: "89.90" },
-      { daysAgo: 80, by: sister.id, cost: "92.50" },
-      { daysAgo: 37, by: julia.id, cost: "89.90" },
+      { daysAgo: 120, by: ana.id, cost: "89.90" },
+      { daysAgo: 80, by: bia.id, cost: "92.50" },
+      { daysAgo: 37, by: ana.id, cost: "89.90" },
     ],
     demonstrates: "chegando em 5 dias · compartilhada com valores",
   },
   {
     name: "Lavar as cortinas",
     scope: "shared",
-    owner: sister.id,
+    owner: bia.id,
     entries: [
-      { daysAgo: 400, by: sister.id },
-      { daysAgo: 220, by: julia.id },
-      { daysAgo: 40, by: sister.id },
+      { daysAgo: 400, by: bia.id },
+      { daysAgo: 220, by: ana.id },
+      { daysAgo: 40, by: bia.id },
     ],
     demonstrates: "em dia, ciclo longo",
   },
   {
     name: "Limpar o filtro do ar-condicionado",
     scope: "shared",
-    owner: julia.id,
+    owner: ana.id,
     entries: [
-      { daysAgo: 250, by: julia.id },
-      { daysAgo: 220, by: sister.id },
-      { daysAgo: 190, by: julia.id },
+      { daysAgo: 250, by: ana.id },
+      { daysAgo: 220, by: bia.id },
+      { daysAgo: 190, by: ana.id },
       // A viagem: 120 dias de intervalo que a mediana precisa ignorar.
-      { daysAgo: 70, by: sister.id },
-      { daysAgo: 40, by: julia.id },
-      { daysAgo: 10, by: sister.id },
+      { daysAgo: 70, by: bia.id },
+      { daysAgo: 40, by: ana.id },
+      { daysAgo: 10, by: bia.id },
     ],
     demonstrates: "mediana ignorando um outlier de 120 dias",
   },
   {
     name: "Cortar as unhas do cachorro",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     entries: [{ daysAgo: 80 }, { daysAgo: 40 }],
     demonstrates: "vencida, mas em cinza — só 1 ciclo medido, não destaca",
   },
   {
     name: "Revisar o carro",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     guessedIntervalDays: 365,
     entries: [{ daysAgo: 200, approximate: true }],
     demonstrates: "rodando no palpite, sem ciclo medido",
@@ -155,7 +155,7 @@ const SEEDS: Seed[] = [
   {
     name: "Trocar o filtro do purificador",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     guessedIntervalDays: 180,
     entries: [],
     demonstrates: "nunca registrada — sem âncora, sem previsão",
@@ -163,19 +163,19 @@ const SEEDS: Seed[] = [
   {
     name: "Lavar o edredom",
     scope: "shared",
-    owner: sister.id,
+    owner: bia.id,
     entries: [
-      { daysAgo: 300, by: sister.id, approximate: true },
-      { daysAgo: 210, by: julia.id, approximate: true },
-      { daysAgo: 120, by: sister.id },
-      { daysAgo: 25, by: julia.id },
+      { daysAgo: 300, by: bia.id, approximate: true },
+      { daysAgo: 210, by: ana.id, approximate: true },
+      { daysAgo: 120, by: bia.id },
+      { daysAgo: 25, by: ana.id },
     ],
     demonstrates: "confiança rebaixada por datas aproximadas",
   },
   {
     name: "Trocar as lâminas do barbeador",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     entries: [
       { daysAgo: 44, cost: "34.90" },
       { daysAgo: 30, cost: "34.90" },
@@ -186,7 +186,7 @@ const SEEDS: Seed[] = [
   {
     name: "Ir ao dentista",
     scope: "personal",
-    owner: julia.id,
+    owner: ana.id,
     alertDaysBefore: 30,
     entries: [{ daysAgo: 370 }, { daysAgo: 190 }, { daysAgo: 15 }],
     demonstrates: "override manual do aviso (30 dias)",
@@ -194,11 +194,11 @@ const SEEDS: Seed[] = [
   {
     name: "Faxina pesada da casa",
     scope: "shared",
-    owner: sister.id,
+    owner: bia.id,
     archived: true,
     entries: [
-      { daysAgo: 200, by: julia.id },
-      { daysAgo: 110, by: sister.id },
+      { daysAgo: 200, by: ana.id },
+      { daysAgo: 110, by: bia.id },
     ],
     demonstrates: "arquivada — não aparece na lista principal",
   },
@@ -232,7 +232,7 @@ for (const seed of SEEDS) {
   console.log(`  ${seed.name.padEnd(38)} ${seed.demonstrates}`)
 }
 
-console.log(`\n${SEEDS.length} ações criadas para Julia e Marina.`)
+console.log(`\n${SEEDS.length} ações criadas para Ana e Bia.`)
 console.log(`Entre em http://localhost:3000/dev-login para escolher com quem entrar.`)
 
 await client.close()
