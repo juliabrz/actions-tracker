@@ -44,3 +44,7 @@ Ver `.env.example`. Em produção, **`DEV_LOGIN` não deve existir** — a trava
 ## Documentação
 
 [`docs/spec.md`](docs/spec.md) é a fonte da verdade: domínio, regras de cálculo, decisões tomadas **e as descartadas com o motivo**. Código que discordar dela está errado — ou o documento precisa ser atualizado antes.
+
+## Licença
+
+[MIT](LICENSE).
