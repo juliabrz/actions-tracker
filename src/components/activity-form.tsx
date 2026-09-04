@@ -53,6 +53,7 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   const [name, setName] = useState(activity?.name ?? "")
   const [scope, setScope] = useState<Scope>(activity?.scope ?? "personal")
   const [lastDoneOn, setLastDoneOn] = useState("")
+  const [lastDoneCost, setLastDoneCost] = useState("")
   // Padrão desmarcado: a data vem de um seletor de calendário, então tratá-la
   // como exata é a leitura literal do que foi preenchido. Quem chutou marca.
   const [lastDoneApproximate, setLastDoneApproximate] = useState(false)
@@ -84,6 +85,7 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
             ...shared,
             lastDoneOn: lastDoneOn || null,
             lastDoneApproximate,
+            lastDoneCost: lastDoneCost || null,
           })
 
       if (!result.ok) {
@@ -127,13 +129,29 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
       {!editing && (
         <div className="space-y-2">
           <Label htmlFor="lastDoneOn">Quando foi a última vez?</Label>
-          <Input
-            id="lastDoneOn"
-            type="date"
-            max={today()}
-            value={lastDoneOn}
-            onChange={(e) => setLastDoneOn(e.target.value)}
-          />
+          <div className="flex gap-2">
+            <Input
+              id="lastDoneOn"
+              type="date"
+              max={today()}
+              value={lastDoneOn}
+              onChange={(e) => setLastDoneOn(e.target.value)}
+              className="flex-1"
+            />
+            {/* O valor pertence à ocorrência, não à atividade — por isso só
+                aparece quando existe uma data para anexá-lo. */}
+            {lastDoneOn && (
+              <Input
+                type="text"
+                inputMode="decimal"
+                value={lastDoneCost}
+                onChange={(e) => setLastDoneCost(e.target.value)}
+                placeholder="R$ (opcional)"
+                aria-label="Quanto custou"
+                className="w-32"
+              />
+            )}
+          </div>
           {lastDoneOn ? (
             <div className="flex items-center gap-2">
               <Checkbox

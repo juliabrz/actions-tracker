@@ -122,6 +122,7 @@ export async function createActivity(input: {
   alertDaysBefore?: number | null
   lastDoneOn?: string | null
   lastDoneApproximate?: boolean
+  lastDoneCost?: string | null
 }): Promise<Result<{ activityId: string }>> {
   const user = await requireUser()
 
@@ -162,6 +163,7 @@ export async function createActivity(input: {
       date: input.lastDoneOn,
       doneById: user.id,
       approximate: input.lastDoneApproximate ?? false,
+      cost: sanitizeCost(input.lastDoneCost),
     })
   }
 
