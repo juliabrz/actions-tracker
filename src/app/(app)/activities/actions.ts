@@ -137,6 +137,13 @@ export async function createActivity(input: {
   const scope = sanitizeScope(input.scope)
   if (!scope) return { ok: false, error: "Escolha quem acompanha." }
 
+  if (input.lastDoneCost && !input.lastDoneOn) {
+    return {
+      ok: false,
+      error: "Informe a data da última vez para registrar o valor.",
+    }
+  }
+
   if (input.lastDoneOn) {
     if (!isValidDate(input.lastDoneOn)) return { ok: false, error: "Data inválida." }
     if (input.lastDoneOn > today()) {

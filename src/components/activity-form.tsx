@@ -138,19 +138,17 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
               onChange={(e) => setLastDoneOn(e.target.value)}
               className="flex-1"
             />
-            {/* O valor pertence à ocorrência, não à atividade — por isso só
-                aparece quando existe uma data para anexá-lo. */}
-            {lastDoneOn && (
-              <Input
-                type="text"
-                inputMode="decimal"
-                value={lastDoneCost}
-                onChange={(e) => setLastDoneCost(e.target.value)}
-                placeholder="R$ (opcional)"
-                aria-label="Quanto custou"
-                className="w-32"
-              />
-            )}
+            {/* Sempre visível. Escondê-lo até haver data deixava o campo
+                indescobrível: ninguém procura o que não está na tela. */}
+            <Input
+              type="text"
+              inputMode="decimal"
+              value={lastDoneCost}
+              onChange={(e) => setLastDoneCost(e.target.value)}
+              placeholder="R$ (opcional)"
+              aria-label="Quanto custou"
+              className="w-32"
+            />
           </div>
           {lastDoneOn ? (
             <div className="flex items-center gap-2">
