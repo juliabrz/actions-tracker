@@ -28,7 +28,10 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
       {/* Os filtros ganham a linha inteira e rolam: numa tela estreita eles
           disputavam espaço com o botão de criar e o empurravam para fora. */}
       <div className="flex items-center gap-2 px-4 py-4 [&:has([data-search-open])>nav]:hidden">
-        <nav className="flex min-w-0 gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* -m-1 p-1: overflow-x-auto recorta tudo que sai da caixa, e a sombra
+            dura de 2px da pastilha ativa era cortada. O padding dá espaço para
+            ela; a margem negativa devolve o espaço ao layout. */}
+        <nav className="-m-1 flex min-w-0 gap-2 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {FILTERS.map(({ value, label }) => (
           <Link
             key={value}
