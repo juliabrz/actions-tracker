@@ -68,7 +68,10 @@ export function SearchBox() {
           onKeyDown={(e) => e.key === "Escape" && fechar()}
           placeholder="Buscar atividade"
           aria-label="Buscar atividade"
-          className="h-9 w-full rounded-full border-2 border-border bg-card pr-3 pl-9 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          // text-base no celular: abaixo de 16px o Safari do iOS dá zoom ao focar.
+          // É a mesma convenção que o Input do shadcn já traz, e este campo,
+          // escrito à mão, tinha ficado de fora dela.
+          className="h-9 w-full rounded-full border-2 border-border bg-card pr-3 pl-9 text-base outline-none placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
         />
       </div>
       <button
