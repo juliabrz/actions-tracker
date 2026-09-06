@@ -285,19 +285,27 @@ Nenhuma. As duas anteriores foram resolvidas:
 - ~~Bug de fuso em `shiftDays`~~ — corrigido. A suíte de datas roda idêntica em `UTC`, `Asia/Tokyo`, `Pacific/Kiritimati` e `America/Sao_Paulo`, com teste de regressão nomeado.
 - ~~Ação com chute mas sem âncora~~ — resolvido como proposto: o formulário de nova ação pergunta "quando foi a última vez?", e a resposta vira a primeira ocorrência, marcada como aproximada. Sem ela, a ação existe mas não projeta data — comportamento coberto por teste.
 
-## 11. Plano de implementação
+## 11. Estado
+
+Em produção: **https://activity-tracker-jb.vercel.app**
 
 | # | Etapa | Status |
 |---|---|---|
 | 1 | Scaffold: Next + Tailwind + shadcn, Drizzle + Neon, Auth.js Google com allowlist | ✅ |
-| 2 | Schema + migration | 🔶 SQL gerado (`drizzle/0000_initial.sql`), não aplicado — falta banco |
-| 3 | Motor de cálculo (`lib/periodicity.ts`) + testes | ✅ 42 testes |
-| 4 | Lista + registrar + desfazer | ✅ telas verificadas rodando |
-| 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ telas verificadas rodando |
-| 6 | Deploy na Vercel + Neon de produção | ⬜ |
+| 2 | Schema + migrations | ✅ aplicadas no Neon; 6 tabelas conferidas |
+| 3 | Motor de cálculo (`lib/periodicity.ts`) + testes | ✅ |
+| 4 | Lista + registrar + desfazer | ✅ |
+| 5 | Detalhe: histórico, retroativo, apagar, arquivar | ✅ |
+| 6 | Deploy na Vercel + Neon de produção | ✅ |
+| 7 | Busca por nome | ✅ |
+| 8 | Adiar atividade | ✅ |
 
-**O que já foi verificado rodando** (PGlite + seed): login, lista com ordenação por urgência, filtros, detalhe com histórico, cadastro, edição, arquivadas, e a regra de visibilidade — a segunda conta vê 4 atividades compartilhadas, a primeira vê 11 (7 pessoais + 4 compartilhadas).
+73 testes. Repositório público em [github.com/juliabrz/actions-tracker](https://github.com/juliabrz/actions-tracker), com deploy automático a cada push na `main`.
 
-**O que ainda não foi verificado:** as mutações. Registrar, desfazer, apagar, criar, editar e arquivar têm o caminho de dados exercitado indiretamente, mas o disparo real de Server Action a partir da interface nunca aconteceu. É o primeiro lugar onde procurar bug.
+**Verificado em produção:** login com Google passando pela allowlist, `/login` renderizando, rotas protegidas redirecionando, e `/dev-login` devolvendo **404** mesmo com `DEV_LOGIN=true` — a trava do `NODE_ENV` sozinha.
 
-**Falta para produção:** connection string do Neon, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` do Google Cloud Console (redirect URI `http://localhost:3000/api/auth/callback/google`) e os dois e-mails em `ALLOWED_EMAILS`.
+**O que continua sem cobertura automatizada:** o disparo de Server Action a partir da interface. Registrar, desfazer, apagar, criar, editar e arquivar são exercitados pelo uso, não por teste — o transporte RSC não se deixa invocar por HTTP nas tentativas feitas. É o primeiro lugar onde procurar bug.
+
+## Próximos passos
+
+O item que segue como o mais valioso é o mesmo desde o começo: **notificação**. Enquanto o aviso existir só dentro do site, ele é um relatório, não um lembrete (§9). E-mail com resumo diário é o degrau mais barato.
