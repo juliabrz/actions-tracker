@@ -4,6 +4,7 @@ import Link from "next/link"
 import { auth } from "@/auth"
 import { ActivityRow } from "@/components/activity-row"
 import { Smiley, Sparkles, Star } from "@/components/stickers"
+import { SearchBox } from "@/components/search-box"
 import { Button } from "@/components/ui/button"
 import { listActivities, type Filter } from "@/lib/activities"
 
@@ -17,16 +18,18 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
   const session = await auth()
   const userId = session!.user!.id!
 
-  const { f } = await searchParams
+  const { f, q } = await searchParams
   const filter: Filter = FILTERS.some((x) => x.value === f) ? (f as Filter) : "all"
 
-  const activities = await listActivities(userId, { filter })
+  const query = typeof q === "string" ? q : ""
+  const activities = await listActivities(userId, { filter, query })
 
   return (
     <div className="mx-auto w-full max-w-2xl">
       {/* Os filtros ganham a linha inteira e rolam: numa tela estreita eles
           disputavam espaço com o botão de criar e o empurravam para fora. */}
-      <nav className="flex gap-2 overflow-x-auto px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex items-center gap-2 px-4 py-4">
+        <nav className="flex min-w-0 gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {FILTERS.map(({ value, label }) => (
           <Link
             key={value}
@@ -38,17 +41,21 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
             }`}
           >
             {label}
-          </Link>
-        ))}
-      </nav>
+            </Link>
+          ))}
+        </nav>
+        <SearchBox />
+      </div>
 
       {activities.length === 0 ? (
         <div className="pop-panel mx-4 space-y-3 px-4 py-14 text-center">
           <Smiley className="mx-auto size-12 text-butter" />
           <p className="text-sm text-muted-foreground">
-            {filter === "all"
-              ? "Nada cadastrado ainda. Comece pela coisa que você mais esquece."
-              : "Nada aqui com esse filtro."}
+            {query
+              ? `Nada encontrado para "${query}".`
+              : filter === "all"
+                ? "Nada cadastrado ainda. Comece pela coisa que você mais esquece."
+                : "Nada aqui com esse filtro."}
           </p>
         </div>
       ) : (

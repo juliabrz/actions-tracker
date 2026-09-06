@@ -7,6 +7,7 @@ import { activities } from "@/db/schema"
 
 import { today } from "./dates"
 import { compareUrgency, estimate, type Forecast } from "./periodicity"
+import { matches } from "./search"
 
 export type Filter = "all" | "mine" | "shared"
 
@@ -36,7 +37,11 @@ function visibleTo(userId: string) {
 
 export async function listActivities(
   userId: string,
-  { filter = "all", archived = false }: { filter?: Filter; archived?: boolean } = {},
+  {
+    filter = "all",
+    archived = false,
+    query = "",
+  }: { filter?: Filter; archived?: boolean; query?: string } = {},
 ): Promise<ActivityWithForecast[]> {
   const hoje = today()
 
@@ -51,6 +56,7 @@ export async function listActivities(
   })
 
   return rows
+    .filter((a) => matches(a.name, query))
     .filter((a) =>
       filter === "mine"
         ? a.scope === "personal"
