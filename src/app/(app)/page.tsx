@@ -28,7 +28,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
     <div className="mx-auto w-full max-w-2xl">
       {/* Os filtros ganham a linha inteira e rolam: numa tela estreita eles
           disputavam espaço com o botão de criar e o empurravam para fora. */}
-      <div className="flex items-center gap-2 px-4 py-4">
+      <div className="relative flex items-center gap-2 px-4 py-4">
         <nav className="flex min-w-0 gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {FILTERS.map(({ value, label }) => (
           <Link
