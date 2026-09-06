@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 
-import { auth } from "@/auth"
+import { requireUserOrRedirect } from "@/auth"
 import { ActivityForm } from "@/components/activity-form"
 import { Flower } from "@/components/stickers"
 import { WindowPanel } from "@/components/window-panel"
@@ -9,10 +9,10 @@ import { getActivity } from "@/lib/activities"
 export default async function EditActivityPage({
   params,
 }: PageProps<"/activities/[id]/edit">) {
-  const session = await auth()
+  const { id: userId } = await requireUserOrRedirect()
   const { id } = await params
 
-  const activity = await getActivity(session!.user!.id!, id)
+  const activity = await getActivity(userId, id)
   if (!activity) notFound()
 
   return (

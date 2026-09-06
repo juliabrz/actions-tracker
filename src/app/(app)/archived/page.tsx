@@ -1,14 +1,14 @@
 import Link from "next/link"
 
-import { auth } from "@/auth"
+import { requireUserOrRedirect } from "@/auth"
 import { BackLink } from "@/components/pill-link"
 import { Star } from "@/components/stickers"
 import { WindowPanel } from "@/components/window-panel"
 import { listActivities } from "@/lib/activities"
 
 export default async function ArchivedPage() {
-  const session = await auth()
-  const activities = await listActivities(session!.user!.id!, { archived: true })
+  const { id: userId } = await requireUserOrRedirect()
+  const activities = await listActivities(userId, { archived: true })
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-4 p-4">

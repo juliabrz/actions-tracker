@@ -2,7 +2,7 @@
 
 import { Search, X } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 /**
  * A busca vive na URL, não em estado de componente: assim ela compõe com o
@@ -17,7 +17,6 @@ export function SearchBox() {
 
   const [aberto, setAberto] = useState(atual !== "")
   const [texto, setTexto] = useState(atual)
-  const campo = useRef<HTMLInputElement>(null)
 
   // Debounce: cada tecla dispararia uma renderização no servidor.
   useEffect(() => {
@@ -41,10 +40,7 @@ export function SearchBox() {
     return (
       <button
         type="button"
-        onClick={() => {
-          setAberto(true)
-          requestAnimationFrame(() => campo.current?.focus())
-        }}
+        onClick={() => setAberto(true)}
         title="Buscar atividade"
         aria-label="Buscar atividade"
         className="shrink-0 rounded-full border-2 border-border bg-card p-2 text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum"
@@ -62,8 +58,8 @@ export function SearchBox() {
           aria-hidden
         />
         <input
-          ref={campo}
           type="search"
+          autoFocus
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           onKeyDown={(e) => e.key === "Escape" && fechar()}

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import { auth } from "@/auth"
+import { requireUserOrRedirect } from "@/auth"
 import { BackLink } from "@/components/pill-link"
 import { BackfillForm } from "@/components/backfill-form"
 import {
@@ -20,10 +20,10 @@ import {
 } from "@/lib/format"
 
 export default async function ActivityPage({ params }: PageProps<"/activities/[id]">) {
-  const session = await auth()
+  const { id: userId } = await requireUserOrRedirect()
   const { id } = await params
 
-  const activity = await getActivity(session!.user!.id!, id)
+  const activity = await getActivity(userId, id)
   if (!activity) notFound()
 
   const { forecast } = activity

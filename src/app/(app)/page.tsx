@@ -1,7 +1,8 @@
 import { Plus } from "lucide-react"
 import Link from "next/link"
+import { Suspense } from "react"
 
-import { auth } from "@/auth"
+import { requireUserOrRedirect } from "@/auth"
 import { ActivityRow } from "@/components/activity-row"
 import { Smiley, Sparkles, Star } from "@/components/stickers"
 import { SearchBox } from "@/components/search-box"
@@ -15,8 +16,7 @@ const FILTERS: { value: Filter; label: string }[] = [
 ]
 
 export default async function ListPage({ searchParams }: PageProps<"/">) {
-  const session = await auth()
-  const userId = session!.user!.id!
+  const { id: userId } = await requireUserOrRedirect()
 
   const { f, q } = await searchParams
   const filter: Filter = FILTERS.some((x) => x.value === f) ? (f as Filter) : "all"
@@ -44,7 +44,10 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
             </Link>
           ))}
         </nav>
-        <SearchBox />
+        {/* useSearchParams exige fronteira de Suspense. */}
+        <Suspense fallback={<div className="size-9 shrink-0" />}>
+          <SearchBox />
+        </Suspense>
       </div>
 
       {activities.length === 0 ? (

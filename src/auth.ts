@@ -1,4 +1,5 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { redirect } from "next/navigation"
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 
@@ -35,6 +36,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 })
+
+/**
+ * Sessão garantida em páginas. Redireciona em vez de lançar.
+ *
+ * O layout já redireciona, mas layout e página renderizam em paralelo: o
+ * `redirect` de um não impede o outro de executar. Sem esta checagem, a página
+ * assumia a sessão com `!` e estourava quando ela faltava.
+ */
+export async function requireUserOrRedirect() {
+  const session = await auth()
+  if (!session?.user?.id) redirect("/login")
+  return session.user as { id: string; name?: string | null; email?: string | null }
+}
 
 /** Guaranteed session — use inside Server Actions. Throws when signed out. */
 export async function requireUser() {
