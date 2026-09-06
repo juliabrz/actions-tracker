@@ -129,14 +129,18 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
       {!editing && (
         <div className="space-y-2">
           <Label htmlFor="lastDoneOn">Quando foi a última vez?</Label>
-          <div className="flex gap-2">
+          {/* Sem altura fixa: no iOS o input[type=date] é um controle nativo com
+              altura própria e não respeita o h-8 do componente, então ele
+              crescia e o campo de valor ficava menor. Com h-auto os dois se
+              esticam para a altura da linha, seja qual for a maior. */}
+          <div className="flex items-stretch gap-2">
             <Input
               id="lastDoneOn"
               type="date"
               max={today()}
               value={lastDoneOn}
               onChange={(e) => setLastDoneOn(e.target.value)}
-              className="flex-1"
+              className="h-auto min-h-8 flex-1"
             />
             {/* Sempre visível. Escondê-lo até haver data deixava o campo
                 indescobrível: ninguém procura o que não está na tela. */}
@@ -147,7 +151,7 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
               onChange={(e) => setLastDoneCost(e.target.value)}
               placeholder="R$ (opcional)"
               aria-label="Quanto custou"
-              className="w-32"
+              className="h-auto min-h-8 w-32"
             />
           </div>
           {lastDoneOn ? (

@@ -1,6 +1,5 @@
 import { Plus } from "lucide-react"
 import Link from "next/link"
-import { Suspense } from "react"
 
 import { requireUserOrRedirect } from "@/auth"
 import { ActivityRow } from "@/components/activity-row"
@@ -34,7 +33,7 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
           <Link
             key={value}
             href={value === "all" ? "/" : `/?f=${value}`}
-            className={`shrink-0 rounded-full border-2 border-border px-3 py-1.5 font-pixel text-[11px] transition-transform ${
+            className={`inline-flex h-8 shrink-0 items-center rounded-full border-2 border-border px-3 font-pixel text-[11px] transition-transform ${
               filter === value
                 ? "bg-candy text-ink shadow-pop-sm"
                 : "bg-card text-muted-foreground hover:bg-bubblegum hover:text-ink"
@@ -44,10 +43,11 @@ export default async function ListPage({ searchParams }: PageProps<"/">) {
             </Link>
           ))}
         </nav>
-        {/* useSearchParams exige fronteira de Suspense. */}
-        <Suspense fallback={<div className="size-9 shrink-0" />}>
-          <SearchBox />
-        </Suspense>
+        {/* Encostada na direita: o wrapper toma o espaço que sobra e empurra a
+            lupa para a borda. Aberta, a nav some e ele vira a linha inteira. */}
+        <div className="ml-auto flex min-w-0 flex-1 justify-end">
+          <SearchBox query={query} filter={filter} />
+        </div>
       </div>
 
       {activities.length === 0 ? (
