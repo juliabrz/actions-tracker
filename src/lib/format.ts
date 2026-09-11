@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
-import type { Confidence, Forecast } from "./periodicity"
+import type { Forecast } from "./periodicity"
 
 // Display strings stay in Portuguese: the two people using this app are
 // Brazilian. Only the code around them is in English.
@@ -46,7 +46,7 @@ export function describeDue(f: Forecast): string {
       : `Volta em ${formatDate(f.snoozedUntil)}`
   }
   if (f.daysRemaining == null || f.nextDate == null) {
-    return f.lastDate ? "Sem estimativa ainda" : "Nunca foi registrada"
+    return f.lastDate ? "Sem previsão ainda" : "Nunca foi registrada"
   }
   if (f.daysRemaining < 0) return `Atrasada há ${days(-f.daysRemaining)}`
   if (f.daysRemaining === 0) return "É hoje"
@@ -54,20 +54,20 @@ export function describeDue(f: Forecast): string {
   return `Em ${days(f.daysRemaining)} · ${formatDate(f.nextDate)}`
 }
 
-const CONFIDENCE_LABEL: Record<Confidence, string> = {
-  no_data: "sem dados",
-  guess: "seu palpite",
-  weak: "estimativa fraca",
-  fair: "estimativa razoável",
-  good: "estimativa boa",
-}
-
+/**
+ * Em vez de rotular a qualidade da estimativa ("fraca", "razoável"), diz em
+ * quantos registros ela se apoia. O número explica a confiança sozinho, é
+ * conferível no histórico logo abaixo, e não obriga ninguém a aprender o
+ * vocabulário interno do app.
+ */
 export function describeConfidence(f: Forecast): string {
-  const label = CONFIDENCE_LABEL[f.confidence]
-  if (f.source === "guess" || f.intervalCount === 0) return label
-  const cycles =
-    f.intervalCount === 1 ? "1 ciclo medido" : `${f.intervalCount} ciclos medidos`
-  return `${label} · ${cycles}`
+  if (f.source === "guess") return "pelo seu palpite"
+  if (f.intervalCount === 0) return "sem histórico"
+
+  // intervalCount são os intervalos entre registros; os registros são um a mais.
+  const registros = f.intervalCount + 1
+  const base = `a partir de ${registros} registros`
+  return f.fromApproximateDates ? `${base}, alguns de memória` : base
 }
 
 export function formatCost(cost: string | null): string | null {

@@ -189,8 +189,8 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
         />
         <p className="text-xs text-muted-foreground">
           {measuredIntervalDays != null
-            ? "Esta atividade já tem ciclo medido, então o palpite não é mais usado."
-            : "Só um palpite para os primeiros dias. É descartado assim que existir um ciclo medido de verdade."}
+            ? "O app já calcula pelo histórico desta atividade, então este palpite não tem mais efeito."
+            : "Serve só até você registrar duas vezes. Depois o app passa a usar o intervalo real."}
         </p>
       </div>
 
@@ -219,23 +219,23 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
             />
             {alert.trim() === "" ? (
               <p className="text-xs text-muted-foreground">
-                Vazio significa automático, proporcional ao ciclo.
+                Deixe vazio para o app decidir sozinho.
                 {suggestedAlert != null ? (
                   <>
                     {" "}
-                    Com {referenceInterval} dias de ciclo, isso dá{" "}
+                    Para esta atividade, seriam{" "}
                     <strong>
                       {suggestedAlert} {suggestedAlert === 1 ? "dia" : "dias"}
                     </strong>
                     .
                   </>
                 ) : (
-                  " Quanto mais longo o ciclo, maior a antecedência."
+                  " Quanto mais espaçada a atividade, mais cedo ele avisa."
                 )}
               </p>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Valor fixo: não muda quando o ciclo mudar.{" "}
+                Fixo: continua o mesmo se a atividade mudar de ritmo.{" "}
                 <button
                   type="button"
                   onClick={() => setAlert("")}

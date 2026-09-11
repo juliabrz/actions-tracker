@@ -333,3 +333,24 @@ describe("adiamento", () => {
     expect([longa, curta].sort(compareUrgency)[0]).toBe(curta)
   })
 })
+
+describe("datas aproximadas ficam visíveis no resultado", () => {
+  it("marca quando alguma data usada foi aproximada", () => {
+    const ocorrencias = series("2025-01-01", [30, 30, 30])
+    ocorrencias[3].approximate = true
+    expect(estimate(ocorrencias, NO_SETTINGS, "2025-04-05").fromApproximateDates).toBe(true)
+  })
+
+  it("não marca quando todas são exatas", () => {
+    expect(
+      estimate(series("2025-01-01", [30, 30, 30]), NO_SETTINGS, "2025-04-05")
+        .fromApproximateDates,
+    ).toBe(false)
+  })
+
+  it("não marca quando a aproximada está fora da janela", () => {
+    const ocorrencias = series("2025-01-01", [30, 30, 30, 30, 30, 30, 30])
+    ocorrencias[0].approximate = true
+    expect(estimate(ocorrencias, NO_SETTINGS, "2025-08-05").fromApproximateDates).toBe(false)
+  })
+})

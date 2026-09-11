@@ -51,7 +51,7 @@ export function DeleteOccurrenceButton({
         <AlertDialogHeader>
           <AlertDialogTitle>Apagar o registro de {dateLabel}?</AlertDialogTitle>
           <AlertDialogDescription>
-            O intervalo estimado será recalculado sem ele.
+            A previsão desta atividade será recalculada sem ele.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -144,7 +144,7 @@ export function DeleteActivityButton({
           <AlertDialogDescription>
             {occurrenceCount === 0
               ? "A atividade será removida. Não há histórico a perder."
-              : `Os ${occurrenceCount} registros do histórico serão apagados junto, e a periodicidade medida se perde. Isso não tem desfazer.`}
+              : `Os ${occurrenceCount} registros do histórico vão junto, e não dá para desfazer.`}
             {" "}
             Se você só parou de fazer isso, prefira arquivar — some da lista e
             guarda o histórico.

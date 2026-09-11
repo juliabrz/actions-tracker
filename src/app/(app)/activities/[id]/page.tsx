@@ -71,14 +71,13 @@ export default async function ActivityPage({ params }: PageProps<"/activities/[i
         )}
         {forecast.alertThresholdDays != null && (
           <p className="text-xs text-muted-foreground">
-            Aviso a partir de {forecast.alertThresholdDays} dias antes
+            Avisa {forecast.alertThresholdDays} dias antes
             {activity.alertDaysBefore == null ? " (automático)" : ""}.
           </p>
         )}
         {!forecast.highlight && forecast.intervalDays != null && (
           <p className="pt-1 text-xs text-muted-foreground">
-            Ainda com poucos ciclos medidos — a previsão aparece, mas não entra na
-            ordenação por urgência.
+            Com poucos registros, essa data ainda pode mudar bastante.
           </p>
         )}
       </section>

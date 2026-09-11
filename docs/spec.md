@@ -256,6 +256,12 @@ Cada item aqui foi discutido e adiado de propósito.
 | Mais de uma casa/grupo por pessoa | Ver seção 2 |
 | Fotos, gráficos, exportação | Sem demanda real |
 
+## 7.2 Voz da interface
+
+A tela diz **o que significa para quem usa**, não como o sistema funciona. "Ciclo medido", "ordenação por urgência" e "estimativa fraca" são vocabulário deste documento — servem para descrever o mecanismo, e vazaram para a interface durante o desenvolvimento.
+
+Em vez de rotular a qualidade da estimativa, a tela diz em quantos registros ela se apoia: **"a partir de 4 registros"**, e **"alguns de memória"** quando alguma data foi marcada como aproximada. O número explica a confiança sozinho, é conferível no histórico logo abaixo, e não obriga ninguém a aprender uma escala inventada.
+
 ## 8.1 Segurança
 
 **Acesso.** Login só por Google, com allowlist de e-mails em `ALLOWED_EMAILS` verificada no callback de `signIn`, mais a exigência de e-mail verificado pelo provedor. A lista falha fechada: variável vazia significa que ninguém entra.

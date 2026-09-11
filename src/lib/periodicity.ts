@@ -29,6 +29,8 @@ export type Forecast = {
   confidence: Confidence
   /** Real intervals observed, not capped by the window. */
   intervalCount: number
+  /** Alguma data usada no cálculo foi marcada como aproximada. */
+  fromApproximateDates: boolean
   lastDate: string | null
   nextDate: string | null
   /** Negative means overdue. */
@@ -106,6 +108,7 @@ export function estimate(
   let intervalDays: number | null = null
   let source: Forecast["source"] = null
   let confidence: Confidence = "no_data"
+  let approximate = false
 
   if (window.length > 0) {
     // Once a real interval exists, the guess is discarded for good (spec §4.2).
@@ -117,6 +120,7 @@ export function estimate(
     // there is real history, imprecise as it may be.
     const used = history.slice(-(window.length + 1))
     if (used.some((o) => o.approximate)) {
+      approximate = true
       confidence = downgrade(confidence, "weak")
     }
   } else if (guessedIntervalDays != null && guessedIntervalDays > 0) {
@@ -155,6 +159,7 @@ export function estimate(
     source,
     confidence,
     intervalCount: intervals.length,
+    fromApproximateDates: approximate,
     lastDate,
     nextDate,
     daysRemaining,
