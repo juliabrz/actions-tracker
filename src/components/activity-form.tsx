@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition, type ReactNode } from "react"
 import { toast } from "sonner"
 
 import { createActivity, updateActivity } from "@/app/(app)/activities/actions"
@@ -16,12 +16,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { PILL_CLASS } from "@/components/pill-link"
+import { WindowPanel } from "@/components/window-panel"
 import { today } from "@/lib/dates"
 import { automaticAlertDays } from "@/lib/periodicity"
 
 type Scope = "personal" | "shared"
 
 type Props = {
+  /** Título e adesivo do painel: o formulário o monta para poder colocar o
+      "voltar" acima dele, guardado pelo aviso de alterações não salvas. */
+  title: string
+  sticker?: ReactNode
   /** Intervalo já medido desta ação, quando existe. Alimenta a sugestão de aviso. */
   measuredIntervalDays?: number | null
   activity?: {
@@ -42,12 +58,22 @@ function positiveIntOrNull(value: string): number | null {
   return value.trim() !== "" && Number.isFinite(n) && n > 0 ? Math.round(n) : null
 }
 
-export function ActivityForm({ activity, measuredIntervalDays }: Props) {
+export function ActivityForm({ activity, measuredIntervalDays, title, sticker }: Props) {
   const editing = Boolean(activity)
   const router = useRouter()
   const [pending, start] = useTransition()
   // Já abre quando há override salvo: um valor que só aparece depois de um
   // clique é um valor que o usuário não sabe que existe.
+  const inicial = {
+    name: activity?.name ?? "",
+    scope: (activity?.scope ?? "personal") as Scope,
+    lastDoneOn: "",
+    lastDoneCost: "",
+    guess: activity?.guessedIntervalDays?.toString() ?? "",
+    alert: activity?.alertDaysBefore?.toString() ?? "",
+  }
+
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(Boolean(activity?.alertDaysBefore))
 
   const [name, setName] = useState(activity?.name ?? "")
@@ -68,6 +94,33 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   // diferente, e para isso basta digitar.
   const referenceInterval = positiveIntOrNull(guess) ?? measuredIntervalDays ?? null
   const suggestedAlert = automaticAlertDays(referenceInterval)
+
+  const alterado =
+    name !== inicial.name ||
+    scope !== inicial.scope ||
+    lastDoneOn !== inicial.lastDoneOn ||
+    lastDoneCost !== inicial.lastDoneCost ||
+    guess !== inicial.guess ||
+    alert !== inicial.alert
+
+  // Cobre recarregar e fechar a aba. Navegação interna o App Router não deixa
+  // bloquear, e é por isso que os dois caminhos de saída daqui de dentro
+  // perguntam antes: um aviso com buracos ensina a confiar e depois falha.
+  useEffect(() => {
+    if (!alterado) return
+    const avisar = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener("beforeunload", avisar)
+    return () => window.removeEventListener("beforeunload", avisar)
+  }, [alterado])
+
+  function voltar() {
+    router.push(activity ? `/activities/${activity.id}` : "/")
+  }
+
+  function sair() {
+    if (alterado) setConfirmandoSaida(true)
+    else voltar()
+  }
 
   function submit(event: React.FormEvent) {
     event.preventDefault()
@@ -100,7 +153,15 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-5">
+    <div className="space-y-4">
+      <button type="button" onClick={sair} className={PILL_CLASS}>
+        <span aria-hidden>←</span>
+        todas as atividades
+      </button>
+
+      <WindowPanel title={title} sticker={sticker}>
+        <form onSubmit={submit} className="space-y-5">
+
       <div className="space-y-2">
         <Label htmlFor="name">O que é?</Label>
         <Input
@@ -253,10 +314,35 @@ export function ActivityForm({ activity, measuredIntervalDays }: Props) {
         <Button type="submit" disabled={pending || !name.trim()}>
           {pending ? "Salvando..." : editing ? "Salvar" : "Criar atividade"}
         </Button>
-        <Button type="button" variant="ghost" onClick={() => router.back()}>
+        {/* Contorno, não fantasma: num app onde tudo que clica tem borda, um
+            botão sem ela não parece botão — e quem queria sair do formulário
+            acabava no ✕ da barra, que encerra a sessão. */}
+        <Button type="button" variant="outline" onClick={sair}>
           Cancelar
         </Button>
       </div>
-    </form>
+        </form>
+      </WindowPanel>
+
+      {/* Diálogo do app, não o confirm do navegador: aquele ignora a identidade
+          visual e não deixa escrever o texto. Um aviso passivo não serviria —
+          ele informaria sem impedir a saída. */}
+      <AlertDialog open={confirmandoSaida} onOpenChange={setConfirmandoSaida}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sair sem salvar?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {editing
+                ? "As alterações que você fez nesta atividade serão descartadas."
+                : "O que você preencheu será descartado e a atividade não será criada."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Continuar editando</AlertDialogCancel>
+            <AlertDialogAction onClick={voltar}>Sair sem salvar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   )
 }

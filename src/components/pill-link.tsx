@@ -8,6 +8,10 @@ import type { ReactNode } from "react"
  * cinza claro: liam-se como legenda, sem nada indicando que dava para clicar —
  * e num deles era o único caminho de volta da tela.
  */
+/** O traço da pastilha, para quem não pode ser um <Link> usar o mesmo visual. */
+export const PILL_CLASS =
+  "pop-panel inline-flex items-center gap-2 px-3 py-1.5 font-pixel text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum"
+
 export function PillLink({
   href,
   children,
@@ -20,7 +24,7 @@ export function PillLink({
   return (
     <Link
       href={href}
-      className={`pop-panel inline-flex items-center gap-2 px-3 py-1.5 font-pixel text-[10px] text-ink transition-transform hover:-translate-y-px hover:bg-bubblegum ${className}`}
+      className={`${PILL_CLASS} ${className}`}
     >
       {children}
     </Link>
