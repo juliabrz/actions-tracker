@@ -61,7 +61,9 @@ export function describeDue(f: Forecast): string {
  * vocabulário interno do app.
  */
 export function describeConfidence(f: Forecast): string {
-  if (f.source === "guess") return "pelo seu palpite"
+  // Sem possessivo: numa atividade compartilhada o palpite pode ter sido dado
+  // pela outra pessoa, e "seu" diria a coisa errada para metade de quem lê.
+  if (f.source === "guess") return "pelo palpite inicial"
   if (f.intervalCount === 0) return "sem histórico"
 
   // intervalCount são os intervalos entre registros; os registros são um a mais.
